@@ -1,0 +1,32 @@
+﻿@page "/diario"
+
+@using Microsoft.Extensions.Logging
+@using diarioAlimentar.Shared
+
+<h3>Diario</h3>
+<div>
+    @*@foreach (var almDaLista in diarioAtual.refeicoes.First().alimentos)
+    {
+        <AlimentoView _alimento=@almDaLista />
+    }*@
+</div>
+
+<div>
+    <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar</button>
+    @if (mostrarBusca)
+    {
+        <AlimentoForm />
+    }
+</div>
+
+@code {
+    private bool mostrarBusca { get; set; } = false;
+    private Diario diarioAtual { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        diarioAtual = new();
+        diarioAtual.refeicoes.Add(new Refeicao(Periodo.Lanche));
+    }
+
+}

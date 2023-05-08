@@ -1,0 +1,12 @@
+﻿@using diarioAlimentar.Shared;
+
+<div>
+    <h3>@_alimento.nome</h3>
+    <p>@_alimento.AlimentoID</p>
+</div>
+
+@code {
+    [Parameter]
+    public Alimento? _alimento { get; set; }
+
+}
