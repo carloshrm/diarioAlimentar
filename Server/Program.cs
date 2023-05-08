@@ -18,7 +18,7 @@ namespace diarioAlimentar
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddIdentityServer()
@@ -55,7 +55,7 @@ namespace diarioAlimentar
             app.UseIdentityServer();
             app.UseAuthorization();
 
-
+            app.UseWebSockets();
             app.MapRazorPages();
             app.MapControllers();
             app.MapFallbackToFile("index.html");
