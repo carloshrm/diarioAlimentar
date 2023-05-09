@@ -3,7 +3,7 @@
 public class Refeicao
 {
     public Guid refeicaoID { get; set; }
-    public ICollection<Alimento> alimentos { get; set; }
+    public ICollection<Porcao> alimentos { get; set; } = new List<Porcao>();
     public Periodo periodo { get; set; }
 
     public Refeicao()
@@ -11,8 +11,8 @@ public class Refeicao
 
     }
 
-    public Refeicao(Periodo p)
+    public Refeicao(Periodo periodo)
     {
-        periodo = p;
+        this.periodo = periodo;
     }
 }
