@@ -13,13 +13,22 @@ namespace diarioAlimentar.Client.Services
             _http = client;
         }
 
-        public async Task<Alimento> GetAlimento(int id)
+        public async Task<Alimento?> GetPorID(int id)
         {
-            var al = await _http.GetFromJsonAsync<Alimento>($"/Alimento/${id}");
+            var al = await _http.GetFromJsonAsync<Alimento>($"/alimento/id/{id}");
             if (al != null)
                 return al;
             else
-                throw new Exception("Alimento não encontrado");
+                return null;
+        }
+
+        public async Task<ICollection<Alimento>?> GetPorNome(string nome)
+        {
+            var al = await _http.GetFromJsonAsync<ICollection<Alimento>>($"/alimento/nome/{nome}");
+            if (al != null)
+                return al;
+            else
+                return null;
         }
     }
 }

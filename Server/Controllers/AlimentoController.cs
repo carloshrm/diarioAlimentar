@@ -16,14 +16,20 @@ public class AlimentoController : ControllerBase
         _alimentos = JsonSerializer.Deserialize<Alimento[]>(info).Where(a => a != null).ToDictionary(a => a.AlimentoID, a => a);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("id/{id}")]
     public async Task<ActionResult<Alimento>> GetAlimentoPorID(int id)
     {
-        _alimentos.TryGetValue(id, out var result);
-
-        if (result != null)
-            return Ok(result);
+        _alimentos.TryGetValue(id, out var resultado);
+        if (resultado != null)
+            return Ok(resultado);
         else
             return NotFound();
+    }
+
+    [HttpGet("nome/{nome}")]
+    public async Task<ActionResult<ICollection<Alimento>>> GetAlimentoPorNome(string nome)
+    {
+        var resultado = _alimentos.Where(a => a.Value.nome.ToLower().Contains(nome)).Select(a => a.Value);
+        return Ok(resultado);
     }
 }

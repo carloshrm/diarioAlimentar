@@ -1,32 +1,85 @@
 ﻿@page "/diario"
+@inject AlimentoService alimentoController
 
-@using Microsoft.Extensions.Logging
+@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared
+
+<AuthorizeView>
+    <Authorized>
+        <p>@context.User.Identity?.Name!</p>
+        <p>save</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>no save</p>
+    </NotAuthorized>
+</AuthorizeView>
 
 <h3>Diario</h3>
 <div>
-    @*@foreach (var almDaLista in diarioAtual.refeicoes.First().alimentos)
+    @foreach (var alm in refeicaoAtual.alimentos)
     {
-        <AlimentoView _alimento=@almDaLista />
-    }*@
+        <AlimentoView porcao=alm />
+    }
 </div>
-
 <div>
     <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar</button>
     @if (mostrarBusca)
     {
-        <AlimentoForm />
+        <div>
+            <InputText id="busca" @bind-Value="buscaDigitada"/>
+            <button type="button" @onclick="buscarAlimento">Procurar</button>
+        </div>
+        <div>
+            @if (encontrados.Any())
+            {
+                @foreach (var al in encontrados)
+                {
+                    <div>
+                        <button onclick=@(() => adicionarAlimento(al))>Adicionar</button>
+                        <p value=@al.AlimentoID>@al.nome</p>
+                    </div>
+                }
+                <InputNumber @bind-Value=qtd />
+            }
+        </div>
     }
 </div>
 
-@code {
-    private bool mostrarBusca { get; set; } = false;
-    private Diario diarioAtual { get; set; }
+<p>@user</p>
 
-    protected override void OnAfterRender(bool firstRender)
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private Diario diarioAtual { get; set; }
+    private Refeicao refeicaoAtual { get; set; }
+    private double qtd { get; set; }
+
+    private bool mostrarBusca { get; set; } = false;
+    private string buscaDigitada { get; set; } = "";
+    private ICollection<Alimento> encontrados { get; set; }
+
+    private string user;
+    protected async override Task OnInitializedAsync()
     {
         diarioAtual = new();
-        diarioAtual.refeicoes.Add(new Refeicao(Periodo.Lanche));
+        refeicaoAtual = new Refeicao(Periodo.Lanche);
+        encontrados = new List<Alimento>();
+
+        var authState = await authenticationState;
+        user = authState.User.Identity.Name;
     }
 
+    private async Task buscarAlimento()
+    {
+        var al = await alimentoController.GetPorNome(buscaDigitada);
+        if (al != null && al.Any())
+            encontrados = al;
+    }
+
+    private void adicionarAlimento(Alimento al)
+    {
+        refeicaoAtual.alimentos.Add(new Porcao() { alimento = al, quantidade = qtd });
+        
+    }
 }
