@@ -25,4 +25,5 @@ public class Alimento
         this.informacao = informacao;
         this.categoria = categoria;
     }
+
 }

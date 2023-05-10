@@ -12,4 +12,5 @@ public class Diario
         refeicoes = new List<Refeicao>();
         data = DateTime.Now;
     }
+
 }

@@ -15,4 +15,12 @@ public class Refeicao
     {
         this.periodo = periodo;
     }
+
+    public InfoNutricional GerarRelatorio()
+    {
+        var resultado = new InfoNutricional();
+        foreach (var alm in alimentos)
+            resultado += alm.alimento.informacao * alm.quantidade;
+        return resultado;
+    }
 }
