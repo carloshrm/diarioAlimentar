@@ -1,0 +1,56 @@
+﻿@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject AlimentoService alimentoController
+
+<div>
+    <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar</button>
+    @if (mostrarBusca)
+    {
+        <div>
+            <InputText id="busca" @bind-Value="buscaDigitada" />
+            <button type="button" @onclick="buscarAlimento">Procurar</button>
+        </div>
+        <div>
+            @if (encontrados.Any())
+            {
+                @foreach (var al in encontrados)
+                {
+                    <div>
+                        <button onclick=@(() => adicionarAlimento(al))>Adicionar</button>
+                        <p value=@al.AlimentoID>@al.nome</p>
+                    </div>
+                }
+                <p><InputNumber @bind-Value=qtd />g/ml</p>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Action<Porcao> refSetter { get; set; }
+
+    private bool mostrarBusca { get; set; } = false;
+    private string buscaDigitada { get; set; } = "";
+    private double qtd { get; set; } = 1;
+    private ICollection<Alimento> encontrados { get; set; }
+
+    protected override void OnInitialized()
+    {
+        encontrados = new List<Alimento>();
+    }
+
+    private void adicionarAlimento(Alimento al)
+    {
+        refSetter.Invoke(new Porcao() { alimento = al, quantidade = qtd });
+        mostrarBusca = !mostrarBusca;
+        qtd = 1;
+    }
+
+    private async Task buscarAlimento()
+    {
+        var al = await alimentoController.GetPorNome(buscaDigitada);
+        if (al != null && al.Any())
+            encontrados = al;
+    }
+}
