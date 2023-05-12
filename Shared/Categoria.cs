@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace diarioAlimentar.Shared;
 
@@ -49,3 +50,11 @@ public enum Categoria
     [Display(Name = "Nozes e sementes")]
     Nozes,
 };
+
+public static class CatHelper
+{
+    public static string GetNomeCategoria(this Categoria c)
+    {
+        return c.GetType().GetMember(c.ToString()).First().GetCustomAttribute<DisplayAttribute>()?.GetName();
+    }
+}
