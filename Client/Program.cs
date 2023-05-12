@@ -22,7 +22,6 @@ namespace diarioAlimentar.Client
 
             builder.Services.AddScoped<AlimentoService>();
             builder.Services.AddApiAuthorization();
-
             await builder.Build().RunAsync();
         }
     }
