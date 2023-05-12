@@ -2,22 +2,32 @@
 @using diarioAlimentar.Shared;
 @inject AlimentoService alimentoController
 
-<div>
+<div id="alimento_form_cont">
     <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar</button>
     @if (mostrarBusca)
     {
         <div>
-            <InputText id="busca" @bind-Value="buscaDigitada" />
-            <button type="button" @onclick="buscarAlimento">Procurar</button>
+            <p>Adicionar um alimento: </p>
+            <div>
+                <span class="oi oi-magnifying-glass"></span>
+                <InputText id="busca" @bind-Value="buscaDigitada" />
+                <button type="button" @onclick="buscarAlimento">Procurar</button>
+            </div>
         </div>
-        <div>
+        <div id="result_busca_cont">
             @if (encontrados.Any())
             {
-                @foreach (var al in encontrados)
+                @foreach (var cat in encontrados.GroupBy(a => a.categoria))
                 {
                     <div>
-                        <button onclick=@(() => adicionarAlimento(al))>Adicionar</button>
-                        <p value=@al.AlimentoID>@al.nome</p>
+                        <h4>@cat.Key.GetNomeCategoria()</h4>
+                        @foreach (var al in cat)
+                        {
+                            <div class="result_alim">
+                                <button class="oi oi-plus" onclick=@(() => adicionarAlimento(al))></button>
+                                <p value=@al.AlimentoID>@al.nome</p>
+                            </div>
+                        }
                     </div>
                 }
                 <p><InputNumber @bind-Value=qtd />g/ml</p>
@@ -49,6 +59,7 @@
 
     private async Task buscarAlimento()
     {
+        if (buscaDigitada.Length == 0) return;
         var al = await alimentoController.GetPorNome(buscaDigitada);
         if (al != null && al.Any())
             encontrados = al;

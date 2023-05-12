@@ -1,0 +1,14 @@
+﻿#alimento_form_cont {
+    padding: 2em;
+}
+
+#result_busca_cont {
+    
+}
+
+.result_alim {
+    margin: 1em 0;
+    border: 2px solid black;
+    display: flex;
+
+}

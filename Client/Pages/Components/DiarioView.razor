@@ -1,19 +1,6 @@
-﻿@page "/diario"
-@using Timer = System.Timers.Timer;
+﻿@using Timer = System.Timers.Timer;
 @using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared
-
-@*
-<AuthorizeView>
-    <Authorized>
-        <p>@context.User.Identity?.Name!</p>
-        <p>save</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>no save</p>
-    </NotAuthorized>
-</AuthorizeView>
-*@
 
 <h3>Diario</h3>
 <div>
@@ -56,6 +43,4 @@
         relatorio = refeicaoAtual.GerarRelatorio();
         StateHasChanged();
     }
-
-
 }
