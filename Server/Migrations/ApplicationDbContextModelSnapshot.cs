@@ -351,6 +351,21 @@ namespace diarioAlimentar.Server.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<double>("altura")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("dataNascimento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("nivelAtividade")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("peso")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("sexo")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")

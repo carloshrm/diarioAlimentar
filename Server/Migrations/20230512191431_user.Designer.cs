@@ -12,8 +12,8 @@ using diarioAlimentar.Server.Data;
 namespace diarioAlimentar.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230509183348_modelupdate")]
-    partial class modelupdate
+    [Migration("20230512191431_user")]
+    partial class user
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -353,6 +353,21 @@ namespace diarioAlimentar.Server.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<double>("altura")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("dataNascimento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("nivelAtividade")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("peso")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("sexo")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

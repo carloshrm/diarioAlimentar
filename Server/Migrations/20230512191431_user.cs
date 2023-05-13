@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace diarioAlimentar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class modelupdate : Migration
+    public partial class user : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,6 +43,11 @@ namespace diarioAlimentar.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    dataNascimento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    peso = table.Column<double>(type: "double precision", nullable: false),
+                    altura = table.Column<double>(type: "double precision", nullable: false),
+                    nivelAtividade = table.Column<int>(type: "integer", nullable: false),
+                    sexo = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
