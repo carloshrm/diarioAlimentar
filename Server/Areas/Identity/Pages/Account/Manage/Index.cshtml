@@ -1,0 +1,45 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Input.dataNascimento" class="form-label"></label>
+                <input asp-for="Input.dataNascimento" class="form-label" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Input.peso" class="form-label"></label>
+                <input asp-for="Input.peso" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Input.altura" class="form-label"></label>
+                <input asp-for="Input.altura" class="form-control" />
+            </div>            
+            <div class="form-group mb-3">
+                <label asp-for="Input.nivelAtividade" class="form-label"></label>
+                <select asp-for="Input.nivelAtividade" class="form-control" asp-items="Html.GetEnumSelectList<NivelAtividade>()"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Input.sexo" class="form-label"></label>
+                <select asp-for="Input.sexo" class="form-control" asp-items="Html.GetEnumSelectList<Sexo>()"></select>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
