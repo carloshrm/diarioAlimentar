@@ -18,4 +18,7 @@ public class ApplicationUser : IdentityUser
 
     [PersonalData]
     public Sexo sexo { get; set; }
+
+    [PersonalData]
+    public IList<Diario> diarios { get; set; }
 }

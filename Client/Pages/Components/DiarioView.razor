@@ -1,9 +1,17 @@
-﻿@using Timer = System.Timers.Timer;
-@using diarioAlimentar.Client.Services;
-@using diarioAlimentar.Shared
+﻿@using System.Security.Claims;
+@using Timer = System.Timers.Timer;
 
-<h3>Diario</h3>
+@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject DiarioService _diarioService;
+
+
+<h3>@test</h3>
+<button @onclick=@(async () => {
+    await _diarioService.SetDiario();
+    })>teste</button>
 <div>
+    
     energia / macro / nutri
     @foreach (var alm in refeicaoAtual.alimentos)
     {
@@ -14,6 +22,8 @@
 <AddAlimentoForm refSetter=@refeicaoSetter />
 
 @code {
+    private string test = "";
+
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
@@ -22,6 +32,9 @@
 
     private InfoNutricional relatorio { get; set; }
     private Action<Porcao> refeicaoSetter { get; set; }
+
+    private double baseTotal { get; set; }
+    private ClaimsPrincipal? usuario { get; set; }
 
     public DiarioView()
     {
@@ -34,7 +47,26 @@
     protected async override Task OnInitializedAsync()
     {
         var authState = await authenticationState;
-        user = authState.User.Identity.Name;
+        if (authState != null && authState.User.Identity.IsAuthenticated)
+            usuario = authState.User;
+        else
+            usuario = null;
+        CalcularBMR();
+    }
+
+    private async Task<double> CalcularBMR()
+    {
+        // REE(males) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) + 5;
+        // REE(females) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) - 161.
+        // https://doi.org/10.1093%2Fajcn%2F51.2.241
+
+        foreach (var c in usuario.Claims)
+        {
+            Console.WriteLine(c.Type + "---");
+            Console.WriteLine(c.Value);
+        }
+        return 0;
+
     }
 
     private void setItemRefeicao(Porcao a)

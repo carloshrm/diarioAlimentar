@@ -135,7 +135,7 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                user.dataNascimento = Input.dataNascimento;
+                user.dataNascimento = Input.dataNascimento.ToUniversalTime();
                 user.peso = Input.peso;
                 user.altura = Input.altura;
                 user.nivelAtividade = Input.nivelAtividade;

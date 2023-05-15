@@ -5,7 +5,7 @@ public class Diario
     public Guid diarioID { get; set; }
     public DateTime data { get; set; }
     public ICollection<Refeicao> refeicoes { get; set; }
-    public string userID { get; set; }
+    public string usuarioID { get; set; }
 
     public Diario()
     {
@@ -13,4 +13,8 @@ public class Diario
         data = DateTime.Now;
     }
 
+    public Diario(string usuarioID)
+    {
+        this.usuarioID = usuarioID;
+    }
 }

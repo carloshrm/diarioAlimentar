@@ -15,18 +15,18 @@ namespace diarioAlimentar.Client.Services
 
         public async Task<Alimento?> GetPorID(int id)
         {
-            var al = await _http.GetFromJsonAsync<Alimento>($"/alimento/id/{id}");
-            if (al != null)
-                return al;
+            var alimentoRequest = await _http.GetFromJsonAsync<Alimento>($"/alimento/id/{id}");
+            if (alimentoRequest != null)
+                return alimentoRequest;
             else
                 return null;
         }
 
         public async Task<ICollection<Alimento>?> GetPorNome(string nome)
         {
-            var al = await _http.GetFromJsonAsync<ICollection<Alimento>>($"/alimento/nome/{nome}");
-            if (al != null)
-                return al;
+            var alimentoRequest = await _http.GetFromJsonAsync<ICollection<Alimento>>($"/alimento/nome/{nome}");
+            if (alimentoRequest != null)
+                return alimentoRequest;
             else
                 return null;
         }

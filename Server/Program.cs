@@ -1,8 +1,11 @@
 global using diarioAlimentar.Shared;
+using System.Security.Claims;
+
 using diarioAlimentar.Server.Data;
 using diarioAlimentar.Server.Models;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace diarioAlimentar
@@ -16,13 +19,32 @@ namespace diarioAlimentar
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+            builder.Services.AddScoped<ApplicationUserClaimsPrincipalFactory>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>();
 
             builder.Services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+                {
+                    options.IdentityResources["openid"].UserClaims.Add(ClaimTypes.DateOfBirth);
+                    options.ApiResources.Single().UserClaims.Add(ClaimTypes.DateOfBirth);
+
+                    options.IdentityResources["openid"].UserClaims.Add(ClaimTypes.Gender);
+                    options.ApiResources.Single().UserClaims.Add(ClaimTypes.Gender);
+
+                    options.IdentityResources["openid"].UserClaims.Add("peso");
+                    options.ApiResources.Single().UserClaims.Add("peso");
+
+                    options.IdentityResources["openid"].UserClaims.Add("altura");
+                    options.ApiResources.Single().UserClaims.Add("altura");
+
+                    options.IdentityResources["openid"].UserClaims.Add("atividade");
+                    options.ApiResources.Single().UserClaims.Add("atividade");
+                });
 
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt()

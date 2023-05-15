@@ -21,6 +21,7 @@ namespace diarioAlimentar.Client
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("diarioAlimentar.ServerAPI"));
 
             builder.Services.AddScoped<AlimentoService>();
+            builder.Services.AddScoped<DiarioService>();
             builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

@@ -12,8 +12,8 @@ using diarioAlimentar.Server.Data;
 namespace diarioAlimentar.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230512191431_user")]
-    partial class user
+    [Migration("20230515191613_modelos")]
+    partial class modelos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -400,16 +400,21 @@ namespace diarioAlimentar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("data")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("userID")
+                    b.Property<string>("usuarioID")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("diarioID");
 
-                    b.ToTable("diarios");
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Diarios");
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Porcao", b =>
@@ -506,6 +511,13 @@ namespace diarioAlimentar.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("diarioAlimentar.Shared.Diario", b =>
+                {
+                    b.HasOne("diarioAlimentar.Server.Models.ApplicationUser", null)
+                        .WithMany("diarios")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("diarioAlimentar.Shared.Porcao", b =>
                 {
                     b.HasOne("diarioAlimentar.Shared.Alimento", "alimento")
@@ -526,6 +538,11 @@ namespace diarioAlimentar.Server.Migrations
                     b.HasOne("diarioAlimentar.Shared.Diario", null)
                         .WithMany("refeicoes")
                         .HasForeignKey("diarioID");
+                });
+
+            modelBuilder.Entity("diarioAlimentar.Server.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("diarios");
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Diario", b =>

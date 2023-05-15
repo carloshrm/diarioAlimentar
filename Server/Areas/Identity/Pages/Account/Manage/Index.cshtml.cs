@@ -126,7 +126,7 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account.Manage
             }
 
             if (Input.dataNascimento != user.dataNascimento)
-                user.dataNascimento = Input.dataNascimento;
+                user.dataNascimento = Input.dataNascimento.ToUniversalTime();
 
             if (Input.peso != user.peso)
                 user.peso = Input.peso;

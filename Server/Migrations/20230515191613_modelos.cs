@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace diarioAlimentar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class user : Migration
+    public partial class modelos : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -85,19 +85,6 @@ namespace diarioAlimentar.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceCodes", x => x.UserCode);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "diarios",
-                columns: table => new
-                {
-                    diarioID = table.Column<Guid>(type: "uuid", nullable: false),
-                    data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    userID = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_diarios", x => x.diarioID);
                 });
 
             migrationBuilder.CreateTable(
@@ -245,6 +232,25 @@ namespace diarioAlimentar.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Diarios",
+                columns: table => new
+                {
+                    diarioID = table.Column<Guid>(type: "uuid", nullable: false),
+                    data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    usuarioID = table.Column<string>(type: "text", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diarios", x => x.diarioID);
+                    table.ForeignKey(
+                        name: "FK_Diarios_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Refeicao",
                 columns: table => new
                 {
@@ -256,9 +262,9 @@ namespace diarioAlimentar.Server.Migrations
                 {
                     table.PrimaryKey("PK_Refeicao", x => x.refeicaoID);
                     table.ForeignKey(
-                        name: "FK_Refeicao_diarios_diarioID",
+                        name: "FK_Refeicao_Diarios_diarioID",
                         column: x => x.diarioID,
-                        principalTable: "diarios",
+                        principalTable: "Diarios",
                         principalColumn: "diarioID");
                 });
 
@@ -336,6 +342,11 @@ namespace diarioAlimentar.Server.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Diarios_ApplicationUserId",
+                table: "Diarios",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Keys_Use",
                 table: "Keys",
                 column: "Use");
@@ -410,16 +421,16 @@ namespace diarioAlimentar.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Alimento");
 
             migrationBuilder.DropTable(
                 name: "Refeicao");
 
             migrationBuilder.DropTable(
-                name: "diarios");
+                name: "Diarios");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }
