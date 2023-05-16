@@ -1,4 +1,7 @@
-﻿using diarioAlimentar.Server.Models;
+﻿using System.Reflection.Emit;
+using System.Reflection.Metadata;
+
+using diarioAlimentar.Server.Models;
 using diarioAlimentar.Shared;
 
 using Duende.IdentityServer.EntityFramework.Options;
@@ -17,5 +20,16 @@ namespace diarioAlimentar.Server.Data
         }
 
         public DbSet<Diario> Diarios { get; set; }
+        public DbSet<Refeicao> Refeicoes { get; set; }
+        public DbSet<Porcao> Porcoes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Diario>()
+                .HasMany(r => r.refeicoes);
+            builder.Entity<Refeicao>()
+                .HasMany(p => p.alimentos);
+            base.OnModelCreating(builder);
+        }
     }
 }

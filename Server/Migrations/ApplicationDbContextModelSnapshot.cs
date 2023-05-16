@@ -378,19 +378,6 @@ namespace diarioAlimentar.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("diarioAlimentar.Shared.Alimento", b =>
-                {
-                    b.Property<int>("AlimentoID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AlimentoID"));
-
-                    b.HasKey("AlimentoID");
-
-                    b.ToTable("Alimento");
-                });
-
             modelBuilder.Entity("diarioAlimentar.Shared.Diario", b =>
                 {
                     b.Property<Guid>("diarioID")
@@ -420,7 +407,7 @@ namespace diarioAlimentar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AlimentoID")
+                    b.Property<int>("alimentoID")
                         .HasColumnType("integer");
 
                     b.Property<double>("quantidade")
@@ -431,11 +418,9 @@ namespace diarioAlimentar.Server.Migrations
 
                     b.HasKey("porcaoID");
 
-                    b.HasIndex("AlimentoID");
-
                     b.HasIndex("refeicaoID");
 
-                    b.ToTable("Porcao");
+                    b.ToTable("Porcoes");
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Refeicao", b =>
@@ -454,7 +439,7 @@ namespace diarioAlimentar.Server.Migrations
 
                     b.HasIndex("diarioID");
 
-                    b.ToTable("Refeicao");
+                    b.ToTable("Refeicoes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -517,17 +502,9 @@ namespace diarioAlimentar.Server.Migrations
 
             modelBuilder.Entity("diarioAlimentar.Shared.Porcao", b =>
                 {
-                    b.HasOne("diarioAlimentar.Shared.Alimento", "alimento")
-                        .WithMany()
-                        .HasForeignKey("AlimentoID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("diarioAlimentar.Shared.Refeicao", null)
                         .WithMany("alimentos")
                         .HasForeignKey("refeicaoID");
-
-                    b.Navigation("alimento");
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Refeicao", b =>

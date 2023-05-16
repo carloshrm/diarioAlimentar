@@ -13,18 +13,6 @@ namespace diarioAlimentar.Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Alimento",
-                columns: table => new
-                {
-                    AlimentoID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Alimento", x => x.AlimentoID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -251,7 +239,7 @@ namespace diarioAlimentar.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Refeicao",
+                name: "Refeicoes",
                 columns: table => new
                 {
                     refeicaoID = table.Column<Guid>(type: "uuid", nullable: false),
@@ -260,36 +248,30 @@ namespace diarioAlimentar.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Refeicao", x => x.refeicaoID);
+                    table.PrimaryKey("PK_Refeicoes", x => x.refeicaoID);
                     table.ForeignKey(
-                        name: "FK_Refeicao_Diarios_diarioID",
+                        name: "FK_Refeicoes_Diarios_diarioID",
                         column: x => x.diarioID,
                         principalTable: "Diarios",
                         principalColumn: "diarioID");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Porcao",
+                name: "Porcoes",
                 columns: table => new
                 {
                     porcaoID = table.Column<Guid>(type: "uuid", nullable: false),
-                    AlimentoID = table.Column<int>(type: "integer", nullable: false),
+                    alimentoID = table.Column<int>(type: "integer", nullable: false),
                     quantidade = table.Column<double>(type: "double precision", nullable: false),
                     refeicaoID = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Porcao", x => x.porcaoID);
+                    table.PrimaryKey("PK_Porcoes", x => x.porcaoID);
                     table.ForeignKey(
-                        name: "FK_Porcao_Alimento_AlimentoID",
-                        column: x => x.AlimentoID,
-                        principalTable: "Alimento",
-                        principalColumn: "AlimentoID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Porcao_Refeicao_refeicaoID",
+                        name: "FK_Porcoes_Refeicoes_refeicaoID",
                         column: x => x.refeicaoID,
-                        principalTable: "Refeicao",
+                        principalTable: "Refeicoes",
                         principalColumn: "refeicaoID");
                 });
 
@@ -372,18 +354,13 @@ namespace diarioAlimentar.Server.Migrations
                 columns: new[] { "SubjectId", "SessionId", "Type" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Porcao_AlimentoID",
-                table: "Porcao",
-                column: "AlimentoID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Porcao_refeicaoID",
-                table: "Porcao",
+                name: "IX_Porcoes_refeicaoID",
+                table: "Porcoes",
                 column: "refeicaoID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Refeicao_diarioID",
-                table: "Refeicao",
+                name: "IX_Refeicoes_diarioID",
+                table: "Refeicoes",
                 column: "diarioID");
         }
 
@@ -415,16 +392,13 @@ namespace diarioAlimentar.Server.Migrations
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
-                name: "Porcao");
+                name: "Porcoes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Alimento");
-
-            migrationBuilder.DropTable(
-                name: "Refeicao");
+                name: "Refeicoes");
 
             migrationBuilder.DropTable(
                 name: "Diarios");
