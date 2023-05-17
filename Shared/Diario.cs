@@ -1,20 +1,26 @@
-﻿namespace diarioAlimentar.Shared;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace diarioAlimentar.Shared;
 
 public class Diario
 {
-    public Guid diarioID { get; set; }
+    [Key]
+    public Guid diarioID { get; set; } = Guid.NewGuid();
+
     public DateTime data { get; set; } = DateTime.Now.ToUniversalTime();
-    public IList<Refeicao> refeicoes { get; set; } = new List<Refeicao>();
     public string usuarioID { get; set; }
+
+    public ICollection<Refeicao> Refeicoes { get; set; } = new List<Refeicao>();
 
     public Diario()
     {
-
+        
     }
 
-    public Diario(string usuarioID)
+    public void AdicionarRefeicao(Refeicao refeicao)
     {
-        this.usuarioID = usuarioID;
+        refeicao.diarioID = diarioID;
+        Refeicoes.Add(refeicao);
     }
 
     public override bool Equals(object? obj)
@@ -22,6 +28,6 @@ public class Diario
         if (obj == null || obj.GetType() != typeof(Diario))
             return false;
         else
-            return diarioID == ((Diario)obj).diarioID;
+            return (diarioID == ((Diario)obj).diarioID) && (usuarioID == ((Diario)obj).usuarioID);
     }
 }

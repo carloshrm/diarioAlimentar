@@ -9,9 +9,11 @@ public class Porcao
     public Guid porcaoID { get; set; } = Guid.NewGuid();
 
     [NotMapped]
-    public Alimento alimento { get; set; } 
+    public Alimento Alimento { get; set; } 
 
     public int alimentoID { get; set; }
     public double quantidade { get; set; }
+
+    public Guid refeicaoID { get; set; }
 
 }
