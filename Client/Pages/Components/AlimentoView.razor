@@ -1,14 +1,25 @@
-﻿@using diarioAlimentar.Shared;
+﻿@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject AlimentoService alimentoService
 
 <div>
-    <p>@porcao.alimento.AlimentoID</p>
-    <h3>@porcao.alimento.nome</h3>
-    <p>Quantidade: @porcao.quantidade</p>
+    <h3>@porcao.Alimento.nome</h3>
+    <p>Quantidade: @porcao.quantidade g</p>
 </div>
 
 @code {
     [Parameter]
     public Porcao porcao { get; set; }
 
-
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+        if (parameters.TryGetValue<Porcao>(nameof(porcao), out var value))
+        {
+            if (value.Alimento == null)
+                value.Alimento = await alimentoService.GetPorID(value.alimentoID);
+            porcao = value;
+        }
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
 }

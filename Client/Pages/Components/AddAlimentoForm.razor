@@ -1,6 +1,6 @@
 ﻿@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
-@inject AlimentoService alimentoController
+@inject AlimentoService alimentoService
 
 <div id="alimento_form_cont">
     <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar</button>
@@ -10,8 +10,8 @@
             <p>Adicionar um alimento: </p>
             <div>
                 <span class="oi oi-magnifying-glass"></span>
-                <InputText id="busca" @bind-Value="buscaDigitada" />
-                <button type="button" @onclick="buscarAlimento">Procurar</button>
+                <InputText id="busca" @bind-Value="buscaDigitada" @onkeydown="BuscaDigitadaHandler" />
+                <button type="button" @onclick="BuscarAlimento">Procurar</button>
             </div>
         </div>
         <div id="result_busca_cont">
@@ -24,7 +24,7 @@
                         @foreach (var al in cat)
                         {
                             <div class="result_alim">
-                                <button class="oi oi-plus" onclick=@(() => adicionarAlimento(al))></button>
+                                <button class="oi oi-plus" onclick=@(() => AdicionarAlimento(al))></button>
                                 <p value=@al.AlimentoID>@al.nome</p>
                             </div>
                         }
@@ -50,17 +50,22 @@
         encontrados = new List<Alimento>();
     }
 
-    private void adicionarAlimento(Alimento al)
+    private void AdicionarAlimento(Alimento al)
     {
-        refSetter.Invoke(new Porcao() { alimento = al, quantidade = qtd });
+        refSetter.Invoke(new Porcao() { Alimento = al, quantidade = qtd, alimentoID = al.AlimentoID });
         mostrarBusca = !mostrarBusca;
         qtd = 1;
     }
 
-    private async Task buscarAlimento()
+    private void BuscaDigitadaHandler(KeyboardEventArgs e)
+    {
+        Console.WriteLine(e.Key);
+    }
+
+    private async Task BuscarAlimento()
     {
         if (buscaDigitada.Length == 0) return;
-        var al = await alimentoController.GetPorNome(buscaDigitada);
+        var al = await alimentoService.GetPorNome(buscaDigitada);
         if (al != null && al.Any())
             encontrados = al;
     }

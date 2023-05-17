@@ -6,24 +6,23 @@
 @inject DiarioService _diarioService;
 
 
-<h3>@test</h3>
-<button @onclick=@(async () => {
-    await _diarioService.SetDiario();
-    })>teste</button>
 <div>
-    
-    energia / macro / nutri
-    @foreach (var alm in refeicaoAtual.alimentos)
+    <div>
+
+    </div>
+    @if (refeicaoAtual != null)
     {
-        <AlimentoView porcao=alm />
+        @foreach (var alm in refeicaoAtual.Porcoes)
+        {
+            <AlimentoView porcao=alm />
+        }
     }
+    <button class="btn btn-primary" @onclick=@salvarDiario>Salvar</button>
 </div>
 
 <AddAlimentoForm refSetter=@refeicaoSetter />
 
 @code {
-    private string test = "";
-
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
@@ -33,46 +32,63 @@
     private InfoNutricional relatorio { get; set; }
     private Action<Porcao> refeicaoSetter { get; set; }
 
-    private double baseTotal { get; set; }
+    private double bmr { get; set; }
     private ClaimsPrincipal? usuario { get; set; }
 
     public DiarioView()
     {
         refeicaoSetter = setItemRefeicao;
-        diarioAtual = new();
-        refeicaoAtual = new Refeicao(Periodo.Lanche);
+        bmr = 2000;
     }
 
-    private string user;
     protected async override Task OnInitializedAsync()
     {
         var authState = await authenticationState;
         if (authState != null && authState.User.Identity.IsAuthenticated)
+        {
             usuario = authState.User;
+            diarioAtual = await _diarioService.GetDiarioHoje();
+            var refeicaoExistente = diarioAtual.Refeicoes.FirstOrDefault();
+
+            if (refeicaoExistente != null)
+            {
+                refeicaoAtual = refeicaoExistente;
+            }
+            else
+            {
+                refeicaoAtual = new Refeicao();
+                diarioAtual.AdicionarRefeicao(refeicaoAtual);
+            }
+            //bmr = CalcularBMR();
+        }
         else
             usuario = null;
-        CalcularBMR();
     }
 
-    private async Task<double> CalcularBMR()
+    private double CalcularBMR()
     {
         // REE(males) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) + 5;
         // REE(females) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) - 161.
         // https://doi.org/10.1093%2Fajcn%2F51.2.241
 
-        foreach (var c in usuario.Claims)
-        {
-            Console.WriteLine(c.Type + "---");
-            Console.WriteLine(c.Value);
-        }
-        return 0;
+        double.TryParse(usuario.Claims.First(c => c.Type.Contains("peso")).Value, out double peso);
+        int.TryParse(usuario.Claims.First(c => c.Type.Contains("altura")).Value, out int altura);
+        int idade = DateTime.Parse(usuario.Claims.First(c => c.Type == ClaimTypes.DateOfBirth).Value).Year - DateTime.Now.Year;
+        Enum.TryParse(usuario.Claims.First(c => c.Type == ClaimTypes.Gender).Value, out Sexo sexo);
+        Enum.TryParse(usuario.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade atividade);
 
+        return (10 * peso) + (6.25 * altura) - (5 * idade) + (sexo == Sexo.masculino ? 5 : -161);
     }
 
     private void setItemRefeicao(Porcao a)
     {
-        refeicaoAtual.alimentos.Add(a);
+        refeicaoAtual.AdicionarPorcao(a);
         relatorio = refeicaoAtual.GerarRelatorio();
         StateHasChanged();
+    }
+
+    private async Task salvarDiario()
+    {
+        var resultado = await _diarioService.SetDiario(diarioAtual);
     }
 }
