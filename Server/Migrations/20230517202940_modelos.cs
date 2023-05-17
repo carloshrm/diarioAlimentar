@@ -244,7 +244,8 @@ namespace diarioAlimentar.Server.Migrations
                 {
                     refeicaoID = table.Column<Guid>(type: "uuid", nullable: false),
                     periodo = table.Column<int>(type: "integer", nullable: false),
-                    diarioID = table.Column<Guid>(type: "uuid", nullable: true)
+                    horario = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
+                    diarioID = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,7 +254,8 @@ namespace diarioAlimentar.Server.Migrations
                         name: "FK_Refeicoes_Diarios_diarioID",
                         column: x => x.diarioID,
                         principalTable: "Diarios",
-                        principalColumn: "diarioID");
+                        principalColumn: "diarioID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -263,7 +265,7 @@ namespace diarioAlimentar.Server.Migrations
                     porcaoID = table.Column<Guid>(type: "uuid", nullable: false),
                     alimentoID = table.Column<int>(type: "integer", nullable: false),
                     quantidade = table.Column<double>(type: "double precision", nullable: false),
-                    refeicaoID = table.Column<Guid>(type: "uuid", nullable: true)
+                    refeicaoID = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,7 +274,8 @@ namespace diarioAlimentar.Server.Migrations
                         name: "FK_Porcoes_Refeicoes_refeicaoID",
                         column: x => x.refeicaoID,
                         principalTable: "Refeicoes",
-                        principalColumn: "refeicaoID");
+                        principalColumn: "refeicaoID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

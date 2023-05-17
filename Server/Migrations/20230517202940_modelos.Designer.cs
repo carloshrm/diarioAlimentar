@@ -12,7 +12,7 @@ using diarioAlimentar.Server.Data;
 namespace diarioAlimentar.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230516185436_modelos")]
+    [Migration("20230517202940_modelos")]
     partial class modelos
     {
         /// <inheritdoc />
@@ -416,7 +416,7 @@ namespace diarioAlimentar.Server.Migrations
                     b.Property<double>("quantidade")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid?>("refeicaoID")
+                    b.Property<Guid>("refeicaoID")
                         .HasColumnType("uuid");
 
                     b.HasKey("porcaoID");
@@ -432,8 +432,11 @@ namespace diarioAlimentar.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("diarioID")
+                    b.Property<Guid>("diarioID")
                         .HasColumnType("uuid");
+
+                    b.Property<TimeOnly>("horario")
+                        .HasColumnType("time without time zone");
 
                     b.Property<int>("periodo")
                         .HasColumnType("integer");
@@ -506,15 +509,19 @@ namespace diarioAlimentar.Server.Migrations
             modelBuilder.Entity("diarioAlimentar.Shared.Porcao", b =>
                 {
                     b.HasOne("diarioAlimentar.Shared.Refeicao", null)
-                        .WithMany("alimentos")
-                        .HasForeignKey("refeicaoID");
+                        .WithMany("Porcoes")
+                        .HasForeignKey("refeicaoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Refeicao", b =>
                 {
                     b.HasOne("diarioAlimentar.Shared.Diario", null)
-                        .WithMany("refeicoes")
-                        .HasForeignKey("diarioID");
+                        .WithMany("Refeicoes")
+                        .HasForeignKey("diarioID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("diarioAlimentar.Server.Models.ApplicationUser", b =>
@@ -524,12 +531,12 @@ namespace diarioAlimentar.Server.Migrations
 
             modelBuilder.Entity("diarioAlimentar.Shared.Diario", b =>
                 {
-                    b.Navigation("refeicoes");
+                    b.Navigation("Refeicoes");
                 });
 
             modelBuilder.Entity("diarioAlimentar.Shared.Refeicao", b =>
                 {
-                    b.Navigation("alimentos");
+                    b.Navigation("Porcoes");
                 });
 #pragma warning restore 612, 618
         }
