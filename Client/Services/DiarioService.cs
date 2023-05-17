@@ -13,27 +13,31 @@ namespace diarioAlimentar.Client.Services
             _http = client;
         }
 
-        public async Task<string?> GetDiarioHoje()
+        public async Task<Diario> GetDiarioHoje()
         {
             var diarioRequest = await _http.GetAsync($"/diario/hoje");
-            //if (diarioRequest.IsSuccessStatusCode)
-                return "eita";
-            //if (diarioRequest != null)
-            //    return diarioRequest;
-            //else
-            //    return null;
+            if (diarioRequest.IsSuccessStatusCode)
+                return await diarioRequest.Content.ReadFromJsonAsync<Diario>();
+            else
+                return new Diario();
         }
 
         public async Task<Diario?> GetDiarioPorData(DateTime data)
         {
-
-            return null;
+            var diarioRequest = await _http.GetAsync($"/diario/data/{data}");
+            if (diarioRequest.IsSuccessStatusCode)
+                return await diarioRequest.Content.ReadFromJsonAsync<Diario>();
+            else
+                return null;
         }
 
-        public async Task<Diario> SetDiario()
+        public async Task<Diario?> SetDiario(Diario diario)
         {
-            var diarioRequest = await _http.GetAsync($"/diario/teste");
-            return null;
+            var diarioRequest = await _http.PostAsJsonAsync($"/diario/set", diario);
+            if (diarioRequest.IsSuccessStatusCode)
+                return await diarioRequest.Content.ReadFromJsonAsync<Diario>();
+            else
+                return null;
         }
     }
 }
