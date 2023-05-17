@@ -37,13 +37,15 @@ public class DiarioController : Controller
         var diarioHoje = _ctx.Diarios.FirstOrDefault(d => d.usuarioID == idUsuarioRequest);
         if (diarioHoje == null)
         {
-            var novoDiario = new Diario(idUsuarioRequest);
+            var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
             _ctx.Diarios.Add(novoDiario);
             await _ctx.SaveChangesAsync();
             return Ok(novoDiario);
         }
-         else
+        else
         {
+            foreach (var dbRefeicao in _ctx.Refeicoes.Where(r => r.diarioID == diarioHoje.diarioID).ToList())
+                _ctx.Porcoes.Where(p => p.refeicaoID == dbRefeicao.refeicaoID).ToList();
             return Ok(diarioHoje);
         }
     }
@@ -51,38 +53,38 @@ public class DiarioController : Controller
     [HttpPost("set")]
     public async Task<ActionResult<Diario>> SetDiario(Diario diario)
     {
-        var usuario = HttpContext.User;
-        if (usuario != null)
+        var diarioAnterior = _ctx.Diarios.FirstOrDefault(d => d == diario);
+        foreach (var r in diario.Refeicoes)
         {
-            var diarioAnterior = await _ctx.Diarios.FirstAsync(d => d == diario);
-            _ctx.Diarios.Entry(diarioAnterior).CurrentValues.SetValues(diario);
-            foreach (var r in diario.refeicoes)
+            var refeicaoAnterior = diarioAnterior.Refeicoes.FirstOrDefault(refe => refe.refeicaoID == r.refeicaoID);
+
+            if (refeicaoAnterior == null)
             {
-                var refeicaoAnterior = diarioAnterior.refeicoes.FirstOrDefault(refe => refe.refeicaoID == r.refeicaoID);
-                if (refeicaoAnterior == null)
+
+                diarioAnterior.AdicionarRefeicao(r);
+                _ctx.Refeicoes.Add(r);
+                foreach (var p in r.Porcoes)
+                    _ctx.Porcoes.Add(p);
+            }
+            else
+            {
+                _ctx.Entry(refeicaoAnterior).CurrentValues.SetValues(r);
+                foreach (var p in r.Porcoes)
                 {
-                    diarioAnterior.refeicoes.Add(r);
-                }
-                else
-                {
-                    _ctx.Entry(refeicaoAnterior).CurrentValues.SetValues(r);
-                    foreach (var porcAlm in r.alimentos)
+                    var porcaoAnterior = refeicaoAnterior.Porcoes.FirstOrDefault(po => po.porcaoID == p.porcaoID);
+                    if (porcaoAnterior == null)
                     {
-                        var porcaoAnterior = refeicaoAnterior.alimentos.FirstOrDefault(po => po.porcaoID == porcAlm.porcaoID);
-                        if (porcaoAnterior == null)
-                            refeicaoAnterior.alimentos.Add(porcAlm);
-                        else
-                        {
-                            _ctx.Entry(porcaoAnterior).CurrentValues.SetValues(porcAlm);
-                        }
-                    }
+                        _ctx.Porcoes.Add(p);
+                        refeicaoAnterior.AdicionarPorcao(p);
+                    } 
+                    else
+                        _ctx.Entry(porcaoAnterior).CurrentValues.SetValues(p);
                 }
             }
-            await _ctx.SaveChangesAsync();
-            return Ok(diario);
         }
-        else
-            return BadRequest();
+        _ctx.Diarios.Entry(diarioAnterior).CurrentValues.SetValues(diario);
+        await _ctx.SaveChangesAsync();
+        return Ok(diario);
     }
 
     [HttpGet("data/{data}")]
