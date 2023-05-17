@@ -26,9 +26,12 @@ namespace diarioAlimentar.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Diario>()
-                .HasMany(r => r.refeicoes);
+                .HasMany(r => r.Refeicoes).WithOne().HasForeignKey(r => r.diarioID).IsRequired();
+
             builder.Entity<Refeicao>()
-                .HasMany(p => p.alimentos);
+                .HasMany(p => p.Porcoes).WithOne().HasForeignKey(p => p.refeicaoID).IsRequired();
+
+
             base.OnModelCreating(builder);
         }
     }
