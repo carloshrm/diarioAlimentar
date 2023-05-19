@@ -1,6 +1,13 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
 
+:root {
+    --light-bg: #FFF4E0;
+    --light-fg: #FFBF9B; 
+    --dark-fg: #B46060;
+    --dark-bg: #4D4D4D;
+}
+
 html, body {
     font-family: 'Nunito', sans-serif;
 }
