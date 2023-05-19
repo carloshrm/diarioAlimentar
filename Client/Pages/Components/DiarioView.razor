@@ -6,21 +6,42 @@
 @inject DiarioService _diarioService;
 
 
-<div>
-    <div>
-
-    </div>
-    @if (refeicaoAtual != null)
+<div class="container-md" id="diario_container">
+    <h2>Diário Alimentar</h2>
+    @if (diarioAtual != null)
     {
-        @foreach (var alm in refeicaoAtual.Porcoes)
-        {
-            <AlimentoView porcao=alm />
-        }
+        <div>
+            <p>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</p>
+            <p>TODO - macro</p>
+        </div>
+        <div>
+            @foreach (var refPeriodo in diarioAtual.Refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo))
+            {
+                @if (refPeriodo.Key == GetPeriodoAtual()) SetRefeicaoAtiva(refPeriodo.Last());
+                <div>
+                    <p>Tipo: @refPeriodo.Key</p>
+                    <div>
+                        @foreach (var refe in refPeriodo)
+                        {
+                            <p>@refe.horario.ToShortTimeString()</p>
+                            <div>
+                                <h3>Alimentos: </h3>
+                                @foreach (var alm in refe.Porcoes)
+                                {
+                                    <AlimentoView _p=alm />
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            <button class="btn btn-primary">Adicionar Refeicao</button>
+        </div>
     }
-    <button class="btn btn-primary" @onclick=@salvarDiario>Salvar</button>
 </div>
 
 <AddAlimentoForm refSetter=@refeicaoSetter />
+<button class="btn btn-primary" @onclick=@salvarDiario>Salvar Diario</button>
 
 @code {
     [CascadingParameter]
@@ -33,7 +54,6 @@
     private Action<Porcao> refeicaoSetter { get; set; }
 
     private double bmr { get; set; }
-    private ClaimsPrincipal? usuario { get; set; }
 
     public DiarioView()
     {
@@ -46,36 +66,50 @@
         var authState = await authenticationState;
         if (authState != null && authState.User.Identity.IsAuthenticated)
         {
-            usuario = authState.User;
             diarioAtual = await _diarioService.GetDiarioHoje();
             var refeicaoExistente = diarioAtual.Refeicoes.FirstOrDefault();
 
             if (refeicaoExistente != null)
             {
-                refeicaoAtual = refeicaoExistente;
+                SetRefeicaoAtiva(refeicaoExistente);
             }
             else
             {
-                refeicaoAtual = new Refeicao();
+                SetRefeicaoAtiva(new Refeicao() { periodo = GetPeriodoAtual() });
                 diarioAtual.AdicionarRefeicao(refeicaoAtual);
             }
-            //bmr = CalcularBMR();
+            bmr = await CalcularBMR();
         }
-        else
-            usuario = null;
     }
 
-    private double CalcularBMR()
+    private void SetRefeicaoAtiva(Refeicao r)
     {
+        refeicaoAtual = r;
+    }
+
+    private Periodo GetPeriodoAtual()
+    {
+        return DateTime.Now.Hour switch
+        {
+            >= 4 and <= 11 => Periodo.Manha,
+            >= 12 and <= 16 => Periodo.Almoco,
+            >= 17 and <= 24 => Periodo.Janta,
+            _ => Periodo.Lanche,
+        };
+    }
+
+    private async Task<double> CalcularBMR()
+    {
+        var auth = await authenticationState;
         // REE(males) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) + 5;
         // REE(females) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) - 161.
         // https://doi.org/10.1093%2Fajcn%2F51.2.241
 
-        double.TryParse(usuario.Claims.First(c => c.Type.Contains("peso")).Value, out double peso);
-        int.TryParse(usuario.Claims.First(c => c.Type.Contains("altura")).Value, out int altura);
-        int idade = DateTime.Parse(usuario.Claims.First(c => c.Type == ClaimTypes.DateOfBirth).Value).Year - DateTime.Now.Year;
-        Enum.TryParse(usuario.Claims.First(c => c.Type == ClaimTypes.Gender).Value, out Sexo sexo);
-        Enum.TryParse(usuario.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade atividade);
+        double.TryParse(auth.User.Claims.First(c => c.Type.Contains("peso")).Value, out double peso);
+        int.TryParse(auth.User.Claims.First(c => c.Type.Contains("altura")).Value, out int altura);
+        int idade = DateTime.Parse(auth.User.Claims.First(c => c.Type == ClaimTypes.DateOfBirth).Value).Year - DateTime.Now.Year;
+        Enum.TryParse(auth.User.Claims.First(c => c.Type == ClaimTypes.Gender).Value, out Sexo sexo);
+        Enum.TryParse(auth.User.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade atividade);
 
         return (10 * peso) + (6.25 * altura) - (5 * idade) + (sexo == Sexo.masculino ? 5 : -161);
     }
@@ -90,5 +124,6 @@
     private async Task salvarDiario()
     {
         var resultado = await _diarioService.SetDiario(diarioAtual);
+        diarioAtual = resultado;
     }
 }

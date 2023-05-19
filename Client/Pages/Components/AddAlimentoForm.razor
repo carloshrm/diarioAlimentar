@@ -17,6 +17,7 @@
         <div id="result_busca_cont">
             @if (encontrados.Any())
             {
+                <p><InputNumber @bind-Value=quantidade />g/ml</p>
                 @foreach (var cat in encontrados.GroupBy(a => a.categoria))
                 {
                     <div>
@@ -30,7 +31,6 @@
                         }
                     </div>
                 }
-                <p><InputNumber @bind-Value=qtd />g/ml</p>
             }
         </div>
     }
@@ -42,7 +42,7 @@
 
     private bool mostrarBusca { get; set; } = false;
     private string buscaDigitada { get; set; } = "";
-    private double qtd { get; set; } = 1;
+    private double quantidade { get; set; } = 1;
     private ICollection<Alimento> encontrados { get; set; }
 
     protected override void OnInitialized()
@@ -52,9 +52,9 @@
 
     private void AdicionarAlimento(Alimento al)
     {
-        refSetter.Invoke(new Porcao() { Alimento = al, quantidade = qtd, alimentoID = al.AlimentoID });
+        refSetter.Invoke(new Porcao() { Alimento = al, quantidade = (quantidade / 100), alimentoID = al.AlimentoID });
         mostrarBusca = !mostrarBusca;
-        qtd = 1;
+        quantidade = 1;
     }
 
     private void BuscaDigitadaHandler(KeyboardEventArgs e)
