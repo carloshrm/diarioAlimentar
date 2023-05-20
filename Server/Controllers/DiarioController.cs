@@ -18,7 +18,7 @@ namespace diarioAlimentar.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class DiarioController : Controller
+public class DiarioController : ControllerBase
 {
     private readonly ApplicationDbContext _ctx;
 
@@ -30,9 +30,6 @@ public class DiarioController : Controller
     [HttpGet("hoje")]
     public async Task<ActionResult<Diario>> GetDiarioHoje()
     {
-        if (HttpContext.User == null)
-            return BadRequest();
-
         var idUsuarioRequest = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
         var diarioHoje = _ctx.Diarios.FirstOrDefault(d => d.usuarioID == idUsuarioRequest);
         if (diarioHoje == null)
@@ -56,12 +53,9 @@ public class DiarioController : Controller
         var diarioAnterior = _ctx.Diarios.FirstOrDefault(d => d == diario);
         foreach (var r in diario.Refeicoes)
         {
-            var refeicaoAnterior = diarioAnterior.Refeicoes.FirstOrDefault(refe => refe.refeicaoID == r.refeicaoID);
-
+            var refeicaoAnterior = _ctx.Refeicoes.FirstOrDefault(refe => refe.refeicaoID == r.refeicaoID);
             if (refeicaoAnterior == null)
             {
-
-                diarioAnterior.AdicionarRefeicao(r);
                 _ctx.Refeicoes.Add(r);
                 foreach (var p in r.Porcoes)
                     _ctx.Porcoes.Add(p);
@@ -71,11 +65,10 @@ public class DiarioController : Controller
                 _ctx.Entry(refeicaoAnterior).CurrentValues.SetValues(r);
                 foreach (var p in r.Porcoes)
                 {
-                    var porcaoAnterior = refeicaoAnterior.Porcoes.FirstOrDefault(po => po.porcaoID == p.porcaoID);
+                    var porcaoAnterior = _ctx.Porcoes.FirstOrDefault(po => po.porcaoID == p.porcaoID);
                     if (porcaoAnterior == null)
                     {
                         _ctx.Porcoes.Add(p);
-                        refeicaoAnterior.AdicionarPorcao(p);
                     } 
                     else
                         _ctx.Entry(porcaoAnterior).CurrentValues.SetValues(p);
@@ -84,15 +77,12 @@ public class DiarioController : Controller
         }
         _ctx.Diarios.Entry(diarioAnterior).CurrentValues.SetValues(diario);
         await _ctx.SaveChangesAsync();
-        return Ok(diario);
+        return Ok(diarioAnterior);
     }
 
     [HttpGet("data/{data}")]
-    public async Task<ActionResult<Diario>> GetDiarioHoje(DateTime data)
+    public async Task<ActionResult<Diario>> GetDiarioPorData(DateTime data)
     {
-        if (HttpContext.User == null)
-            return BadRequest();
-
         var idUsuarioRequest = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
         var diarioPorData = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == data.Date);
         if (diarioPorData != null)
