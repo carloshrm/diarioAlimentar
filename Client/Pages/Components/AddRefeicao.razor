@@ -1,0 +1,32 @@
+﻿@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject RefeicaoService _refeicaoService;
+
+<button class="btn btn-primary" @onclick=@(() => novaRefeicao = !novaRefeicao)>Adicionar Refeicao</button>
+@if (novaRefeicao)
+{
+    <div>
+        <p>Periodo: </p>
+        <select @bind=@periodoSelecionado>
+            @foreach (var pr in Enum.GetValues(typeof(Periodo)))
+            {
+                <option value="@pr" "@(pr == GetPeriodoatual() ? "selected" : "")">@pr</option>
+            }
+        </select>
+        <button @onclick=@(async () => AdicionarRefeicao(new Refeicao() { periodo = periodoSelecionado }))>Adicionar</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Diario diarioAtual { get; set; }
+
+    private Periodo periodoSelecionado { get; set; } = Periodo.Lanche;
+    private bool novaRefeicao { get; set; } = false;
+
+    private async void AdicionarRefeicao(Refeicao novaRefeicao)
+    {
+        diarioAtual.AdicionarRefeicao(novaRefeicao);
+        await _refeicaoService.AddRefeicao(novaRefeicao);
+    }
+}

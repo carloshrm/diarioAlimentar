@@ -1,0 +1,43 @@
+﻿.porcao_view {
+    border: 2px solid gray;
+    margin: 0.4em;
+    color: white;
+}
+
+.porcao_container {
+    display: flex;
+    align-items: center;
+    background-color: var(--dark-bg);
+}
+
+p {
+    margin: 0.4em 0.8em;
+}
+
+.alimento_quantidade {
+
+}
+.alimento_nome {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+button {
+    background-color: var(--dark-bg);
+    color: white;
+    display: flex;
+    align-items: center;
+    border: none;  
+    margin: 0 1em;
+    padding: 0.4em;
+}
+
+button span {
+    margin: 0.4em;
+    font-family: 'Nunito', sans-serif;
+}
+
+.alimento_btn {
+    display: flex;
+    margin-left: auto;
+}

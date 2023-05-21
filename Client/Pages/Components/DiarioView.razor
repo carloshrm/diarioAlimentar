@@ -3,6 +3,7 @@
 
 @using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
+
 @inject DiarioService _diarioService;
 
 
@@ -12,36 +13,46 @@
     {
         <div>
             <p>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</p>
-            <p>TODO - macro</p>
+            <div>
+                <p>Energia Consumida: @(relatorio.Centesimal.energiaKcal)kcal</p>
+                <p>TMB: @bmr</p>
+                <p>Total: @(relatorio.Centesimal.energiaKcal) - @(bmr)kcal</p>
+                @*TODO - view info nutricional, componente p/ relatorio & detalhes*@
+            </div>
         </div>
         <div>
             @foreach (var refPeriodo in diarioAtual.Refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo))
             {
-                @if (refPeriodo.Key == GetPeriodoAtual()) SetRefeicaoAtiva(refPeriodo.Last());
-                <div>
-                    <p>Tipo: @refPeriodo.Key</p>
+                @if (refPeriodo.Key == GetPeriodoAtual()) SetRefeicaoAtiva(refPeriodo.First());
+                <div class="border border-4 m-4">
+                    <h2>@refPeriodo.Key</h2>
                     <div>
-                        @foreach (var refe in refPeriodo)
+                        @foreach (var refGravada in refPeriodo)
                         {
-                            <p>@refe.horario.ToShortTimeString()</p>
-                            <div>
-                                <h3>Alimentos: </h3>
-                                @foreach (var alm in refe.Porcoes)
+                            <div @onclick=@(() => SetRefeicaoAtiva(refGravada)) class="p-2 @(refeicaoAtual == refGravada ? "shadow" : "")">
+                                <p>@refGravada.horario.ToShortTimeString()</p>
+                                <div>
+                                    <h3>Alimentos: </h3>
+                                    @foreach (var prato in refGravada.Porcoes)
+                                    {
+                                        <PorcaoView _porcao=prato />
+                                    }
+                                </div>
+                                @if (refeicaoAtual == refGravada)
                                 {
-                                    <AlimentoView _p=alm />
+                                    <AddAlimento refSetter=@refeicaoSetter />
                                 }
                             </div>
                         }
                     </div>
                 </div>
             }
-            <button class="btn btn-primary">Adicionar Refeicao</button>
+            <AddRefeicao diarioAtual=@diarioAtual />
         </div>
     }
 </div>
 
-<AddAlimentoForm refSetter=@refeicaoSetter />
-<button class="btn btn-primary" @onclick=@salvarDiario>Salvar Diario</button>
+<button class="btn btn-primary" @onclick=@SalvarDiario>Salvar Diario</button>
 
 @code {
     [CascadingParameter]
@@ -53,12 +64,12 @@
     private InfoNutricional relatorio { get; set; }
     private Action<Porcao> refeicaoSetter { get; set; }
 
-    private double bmr { get; set; }
+
+    private double bmr { get; set; } = 2000;
 
     public DiarioView()
     {
         refeicaoSetter = setItemRefeicao;
-        bmr = 2000;
     }
 
     protected async override Task OnInitializedAsync()
@@ -121,7 +132,7 @@
         StateHasChanged();
     }
 
-    private async Task salvarDiario()
+    private async Task SalvarDiario()
     {
         var resultado = await _diarioService.SetDiario(diarioAtual);
         diarioAtual = resultado;
