@@ -21,17 +21,22 @@ namespace diarioAlimentar.Server.Controllers;
 public class DiarioController : ControllerBase
 {
     private readonly ApplicationDbContext _ctx;
+    private readonly AlimentoProvider _provider;
 
-    public DiarioController(ApplicationDbContext diarioContext)
+    public DiarioController(ApplicationDbContext diarioContext, AlimentoProvider alimentoProvider)
     {
         _ctx = diarioContext;
+        _provider = alimentoProvider;
     }
 
     [HttpGet("hoje")]
     public async Task<ActionResult<Diario>> GetDiarioHoje()
     {
-        var idUsuarioRequest = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-        var diarioHoje = _ctx.Diarios.FirstOrDefault(d => d.usuarioID == idUsuarioRequest);
+        var idUsuarioRequest = HttpContext.User.Claims
+            .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        var diarioHoje = _ctx.Diarios
+            .FirstOrDefault(d => d.usuarioID == idUsuarioRequest && d.data.Date == DateTime.Now.ToUniversalTime().Date);
+
         if (diarioHoje == null)
         {
             var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
@@ -41,8 +46,14 @@ public class DiarioController : ControllerBase
         }
         else
         {
-            foreach (var dbRefeicao in _ctx.Refeicoes.Where(r => r.diarioID == diarioHoje.diarioID).ToList())
-                _ctx.Porcoes.Where(p => p.refeicaoID == dbRefeicao.refeicaoID).ToList();
+            foreach (var dbRefeicao in _ctx.Refeicoes
+                .Where(r => r.diarioID == diarioHoje.diarioID)
+                .ToList())
+                _ctx.Porcoes
+                    .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
+                    .ToList()
+                    .ForEach(p => p.Alimento = _provider.alimentos.GetValueOrDefault(p.alimentoID));
+
             return Ok(diarioHoje);
         }
     }

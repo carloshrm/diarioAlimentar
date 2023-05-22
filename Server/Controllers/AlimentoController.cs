@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace diarioAlimentar.Server.Controllers;
 
@@ -8,18 +6,17 @@ namespace diarioAlimentar.Server.Controllers;
 [Route("[controller]")]
 public class AlimentoController : ControllerBase
 {
-    private IReadOnlyDictionary<int, Alimento> _alimentos;
+    private AlimentoProvider _provider;
 
-    public AlimentoController()
+    public AlimentoController(AlimentoProvider provider)
     {
-        var info = System.IO.File.ReadAllText("./Data/Info_Alimentos.json");
-        _alimentos = JsonSerializer.Deserialize<Alimento[]>(info).Where(a => a != null).ToDictionary(a => a.AlimentoID, a => a);
+        _provider = provider;
     }
 
     [HttpGet("id/{id}")]
     public async Task<ActionResult<Alimento>> GetAlimentoPorID(int id)
     {
-        _alimentos.TryGetValue(id, out var resultado);
+        _provider.alimentos.TryGetValue(id, out var resultado);
         if (resultado != null)
             return Ok(resultado);
         else
@@ -29,7 +26,7 @@ public class AlimentoController : ControllerBase
     [HttpGet("nome/{nome}")]
     public async Task<ActionResult<ICollection<Alimento>>> GetAlimentoPorNome(string nome)
     {
-        var resultado = _alimentos.Where(a => a.Value.nome.ToLower().Contains(nome)).Select(a => a.Value);
+        var resultado = _provider.alimentos.Where(a => a.Value.nome.ToLower().Contains(nome)).Select(a => a.Value);
         return Ok(resultado);
     }
 }
