@@ -14,8 +14,10 @@ namespace diarioAlimentar.Server.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions options, 
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+        public ApplicationDbContext(
+            DbContextOptions options, 
+            IOptions<OperationalStoreOptions> operationalStoreOptions) 
+            : base(options, operationalStoreOptions)
         {
         }
 
@@ -26,11 +28,17 @@ namespace diarioAlimentar.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Diario>()
-                .HasMany(r => r.Refeicoes).WithOne().HasForeignKey(r => r.diarioID).IsRequired();
+                .HasMany(r => r.Refeicoes)
+                .WithOne()
+                .HasForeignKey(r => r.diarioID)
+                .IsRequired();
 
             builder.Entity<Refeicao>()
-                .HasMany(p => p.Porcoes).WithOne().HasForeignKey(p => p.refeicaoID).IsRequired();
-
+                .HasMany(p => p.Porcoes)
+                .WithOne()
+                .HasForeignKey(p => p.refeicaoID)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(builder);
         }
