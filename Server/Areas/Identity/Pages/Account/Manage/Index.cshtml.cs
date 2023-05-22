@@ -84,11 +84,7 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(ApplicationUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            Username = userName;
-
+            Username = await _userManager.GetUserNameAsync(user);
             Input = new InputModel
             {
                 dataNascimento = user.dataNascimento,
@@ -141,7 +137,6 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account.Manage
                 user.sexo = Input.sexo;
 
             await _userManager.UpdateAsync(user);
-
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
