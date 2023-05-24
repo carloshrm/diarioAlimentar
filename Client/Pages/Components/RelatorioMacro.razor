@@ -1,0 +1,61 @@
+﻿@using diarioAlimentar.Shared;
+
+<div id="relatorio_cont">
+    <h4>Resumo de Energia</h4>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Consumida</th>
+                <th scope="col">TMB</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@(relatorio.Centesimal.energiaKcal) kcal</td>
+                <td>@bmr kcal</td>
+                <td>@(Math.Round(relatorio.Centesimal.energiaKcal - bmr, 2)) kcal</td>
+            </tr>
+        </tbody>
+
+    </table>
+    <h4>Resumo de Macronutrientes</h4>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Tipo</th>
+                <th scope="col">Consumido</th>
+                <th scope="col">Alvo</th>
+                <th scope="col">%</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td scope="row">Carboidratos</td>
+                <td>@Math.Round(relatorio.Centesimal.carboidrato, 2) g</td>
+                <td>@(Math.Round((bmr * 0.5) / 4))g</td>
+                <td>@(Math.Round((relatorio.Centesimal.carboidrato / Math.Round((bmr * 0.5) / 4)) * 100, 2))</td>
+            </tr>
+            <tr>
+                <td scope="row">Proteinas</td>
+                <td>@Math.Round(relatorio.Centesimal.proteina, 2) g</td>
+                <td>@(Math.Round((bmr * 0.3) / 4))g</td>
+                <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.3) / 4)) * 100, 2))</td>
+            </tr>
+            <tr>
+                <td scope="row">Gorduras</td>
+                <td>@Math.Round(relatorio.Gorduras.GetGordurasTotais(), 2) g</td>
+                <td>@(Math.Round((bmr * 0.2) / 4))g</td>
+                <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.2) / 9)) * 100, 2))</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public InfoNutricional relatorio { get; set; }
+
+    [Parameter]
+    public double bmr { get; set; }
+}

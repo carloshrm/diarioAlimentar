@@ -1,0 +1,73 @@
+﻿@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject PorcaoService _porcaoService;
+@inject RefeicaoService _refeicaoService;
+
+@foreach (var refPeriodo in listaLocal)
+{
+    <div class="border border-4 m-2">
+        <h2>@refPeriodo.Key</h2>
+        <div>
+            @foreach (var refGravada in refPeriodo)
+            {
+                @if (refeicaoAtiva == null) refeicaoAtiva = refGravada;
+
+                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-2 @(refeicaoAtiva == refGravada ? "shadow" : "")">
+                    <div>
+                        <p>Adicionada as: @refGravada.horario.ToShortTimeString()</p>
+                        <h4>Alimentos: </h4>
+                        @foreach (var p in refGravada.Porcoes)
+                        {
+                            <PorcaoView porcao=p callbackDelete=@(async (p) => await RemoverPorcao(p))/>
+                        }
+                    </div>
+                    @if (refeicaoAtiva == refGravada)
+                    {
+                        <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar/>
+                    }
+                    <button @onclick=@(() => confirmarRemocao = !confirmarRemocao)>X</button>
+                    @if (confirmarRemocao)
+                    {
+                        <div>
+                            <p>Tem certeza que deseja remover essa refeição e todos os alimentos registrados?</p>
+                            <button @onclick=@(async () => {
+                                await _refeicaoService.RemoveRefeicao(refGravada);
+                                StateHasChanged();
+                            })>OK</button>
+                            <button>CCL</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ICollection<Refeicao> refeicoes { get; set; }
+
+    [Parameter]
+    public Action callbackAtualizar { get; set; }
+
+    private IEnumerable<IGrouping<Periodo, Refeicao>> listaLocal { get; set; }
+
+    public Refeicao? refeicaoAtiva { get; set; } = null;
+    private bool confirmarRemocao { get; set; } = false;
+
+    protected override void OnParametersSet()
+    {
+        listaLocal = refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo);
+        base.OnParametersSet();
+    }
+
+    public async Task RemoverPorcao(Porcao p)
+    {
+        var resultado = await _porcaoService.RemovePorcao(p);
+        if (resultado)
+        {
+            refeicoes.First(r => r.refeicaoID == p.refeicaoID).Porcoes.Remove(p);
+            callbackAtualizar();
+        }
+    }
+}

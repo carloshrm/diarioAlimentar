@@ -4,72 +4,49 @@
 @using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
 
+@implements IDisposable;
 @inject DiarioService _diarioService;
 
-
-<div class="container-md" id="diario_container">
-    <h2>Diário Alimentar</h2>
+<div class="container-md container-transp" id="diario_container">
+    <h1>Diário Alimentar</h1>
     @if (diarioAtual != null)
     {
         <div>
-            <p>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</p>
-            <div>
-                <p>Energia Consumida: @(relatorio.Centesimal.energiaKcal)kcal</p>
-                <p>TMB: @bmr</p>
-                <p>Total: @(relatorio.Centesimal.energiaKcal) - @(bmr)kcal</p>
-                @*TODO - view info nutricional, componente p/ relatorio & detalhes*@
-            </div>
+            <p class="mx-4">Data: @diarioAtual.data.ToString("dd/MM/yyyy")</p>
+            <RelatorioMacro bmr=@bmr relatorio=@relatorio />
         </div>
         <div>
-            @foreach (var refPeriodo in diarioAtual.Refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo))
-            {
-                @if (refPeriodo.Key == GetPeriodoAtual()) SetRefeicaoAtiva(refPeriodo.First());
-                <div class="border border-4 m-4">
-                    <h2>@refPeriodo.Key</h2>
-                    <div>
-                        @foreach (var refGravada in refPeriodo)
-                        {
-                            <div @onclick=@(() => SetRefeicaoAtiva(refGravada)) class="p-2 @(refeicaoAtual == refGravada ? "shadow" : "")">
-                                <p>@refGravada.horario.ToShortTimeString()</p>
-                                <div>
-                                    <h3>Alimentos: </h3>
-                                    @foreach (var prato in refGravada.Porcoes)
-                                    {
-                                        <PorcaoView _porcao=prato />
-                                    }
-                                </div>
-                                @if (refeicaoAtual == refGravada)
-                                {
-                                    <AddAlimento refSetter=@refeicaoSetter />
-                                }
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-            <AddRefeicao diarioAtual=@diarioAtual />
+            <h2>Refeições</h2>
+            <RefeicoesView refeicoes=@diarioAtual.Refeicoes callbackAtualizar=@atualizarRelatorio />
+            <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarRelatorio />
         </div>
+    }
+    else
+    {
+        <Carregando />
     }
 </div>
 
-<button class="btn btn-primary" @onclick=@SalvarDiario>Salvar Diario</button>
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
     private Diario diarioAtual { get; set; }
-    private Refeicao refeicaoAtual { get; set; }
 
     private InfoNutricional relatorio { get; set; }
-    private Action<Porcao> refeicaoSetter { get; set; }
-
+    private Action atualizarRelatorio { get; set; }
 
     private double bmr { get; set; } = 2000;
 
     public DiarioView()
     {
-        refeicaoSetter = setItemRefeicao;
+        relatorio = new InfoNutricional();
+        atualizarRelatorio = () =>
+        {
+            relatorio = CalcularRelatorioGeral();
+            StateHasChanged();
+        };
     }
 
     protected async override Task OnInitializedAsync()
@@ -78,24 +55,9 @@
         if (authState != null && authState.User.Identity.IsAuthenticated)
         {
             diarioAtual = await _diarioService.GetDiarioHoje();
-            var refeicaoExistente = diarioAtual.Refeicoes.FirstOrDefault();
-
-            if (refeicaoExistente != null)
-            {
-                SetRefeicaoAtiva(refeicaoExistente);
-            }
-            else
-            {
-                SetRefeicaoAtiva(new Refeicao() { periodo = GetPeriodoAtual() });
-                diarioAtual.AdicionarRefeicao(refeicaoAtual);
-            }
+            relatorio = CalcularRelatorioGeral();
             bmr = await CalcularBMR();
         }
-    }
-
-    private void SetRefeicaoAtiva(Refeicao r)
-    {
-        refeicaoAtual = r;
     }
 
     private Periodo GetPeriodoAtual()
@@ -111,30 +73,41 @@
 
     private async Task<double> CalcularBMR()
     {
-        var auth = await authenticationState;
         // REE(males) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) + 5;
         // REE(females) = 10 x weight(kg) + 6.25 x height(cm) - 5 x age(y) - 161.
-        // https://doi.org/10.1093%2Fajcn%2F51.2.241
+        //Sedentary * 1.2 //Lightly active *1.375 //Moderately active *1.55 //Active * 1.725 //Very active *1.9
+        var auth = await authenticationState;
 
         double.TryParse(auth.User.Claims.First(c => c.Type.Contains("peso")).Value, out double peso);
         int.TryParse(auth.User.Claims.First(c => c.Type.Contains("altura")).Value, out int altura);
         int idade = DateTime.Parse(auth.User.Claims.First(c => c.Type == ClaimTypes.DateOfBirth).Value).Year - DateTime.Now.Year;
         Enum.TryParse(auth.User.Claims.First(c => c.Type == ClaimTypes.Gender).Value, out Sexo sexo);
-        Enum.TryParse(auth.User.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade atividade);
+        Enum.TryParse(auth.User.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade nivelAtividade);
 
-        return (10 * peso) + (6.25 * altura) - (5 * idade) + (sexo == Sexo.masculino ? 5 : -161);
+        return (10 * peso) + (6.25 * altura) - (5 * idade) + (sexo == Sexo.masculino ? 5 : -161)
+            * (nivelAtividade switch
+            {
+                NivelAtividade.Sedentario => 1.2,
+                NivelAtividade.AtivoLeve => 1.375,
+                NivelAtividade.AtivoModerado => 1.55,
+                NivelAtividade.AtivoMuito => 1.725,
+                NivelAtividade.AtivoExtremo => 1.9,
+            });
     }
 
-    private void setItemRefeicao(Porcao a)
+    private InfoNutricional CalcularRelatorioGeral()
     {
-        refeicaoAtual.AdicionarPorcao(a);
-        relatorio = refeicaoAtual.GerarRelatorio();
-        StateHasChanged();
+        return diarioAtual.Refeicoes.Select(a => a.GerarRelatorio()).Aggregate((a, b) => a + b);
     }
 
     private async Task SalvarDiario()
     {
-        var resultado = await _diarioService.SetDiario(diarioAtual);
-        diarioAtual = resultado;
+        await _diarioService.SetDiario(diarioAtual);
     }
+
+    public async void Dispose()
+    {
+        await SalvarDiario();
+    }
+
 }

@@ -1,14 +1,31 @@
 ﻿#alimento_form_cont {
-    padding: 2em;
+    background-color: var(--white-t);
 }
 
-#result_busca_cont {
-    
+#busca_alimento_resultados {
+    max-height: 30vh;
+    overflow-y: scroll;
+    padding: 2em 1em;
+    background-color: var(--light-m);
 }
 
-.result_alim {
-    margin: 1em 0;
-    border: 2px solid black;
+.busca_alimento_unidade {
+    margin: 0.4em 0;
     display: flex;
+    padding: 0.4em 0;
+    align-items: center;
+    background-color: white;
+}
 
+.busca_alimento_unidade p {
+    margin: 0 1em;
+}
+
+.add_alimento_conf {
+    margin: 0 4em;
+}
+
+button {
+    border: none;
+    padding: 0.4em;
 }

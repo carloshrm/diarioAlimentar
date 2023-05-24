@@ -1,72 +1,116 @@
 ﻿@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
-@inject AlimentoService alimentoService
+@inject AlimentoService _alimentoService
+@inject PorcaoService _porcaoService
 
 <div id="alimento_form_cont">
-    <button class="btn btn-primary" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar Alimento</button>
+    <button class="btn-diario" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar Alimento</button>
     @if (mostrarBusca)
     {
         <div>
             <p>Adicionar um alimento: </p>
-            <div>
+            <div class="mx-4">
                 <span class="oi oi-magnifying-glass"></span>
-                <InputText id="busca" @bind-Value="buscaDigitada" @onkeydown="BuscaDigitadaHandler" />
-                <button type="button" @onclick="BuscarAlimento">Procurar</button>
+                <input id="busca" @bind=@buscaDigitada @bind:event="oninput" @onkeyup="BuscaDigitadaHandler" />
+                <button class="btn-diario-alt" @onclick="BuscarAlimento">Procurar</button>
             </div>
         </div>
-        <div id="result_busca_cont">
-            @if (encontrados.Any())
+        @if (encontrados.Any())
+        {
+        <div id="busca_alimento_resultados">
+            @foreach (var cat in encontrados.GroupBy(a => a.categoria))
             {
-                <p><InputNumber @bind-Value=quantidade />g/ml</p>
-                @foreach (var cat in encontrados.GroupBy(a => a.categoria))
-                {
-                    <div>
-                        <h4>@cat.Key.GetNomeCategoria()</h4>
-                        @foreach (var al in cat)
+                <div>
+                    <h4>@cat.Key.GetNomeCategoria()</h4>
+                    @foreach (var al in cat)
+                    {
+                        <div class="busca_alimento_unidade">
+                            <button class="oi oi-plus" @onclick=@(() => { 
+                                if (expandirDetalhes == al.AlimentoID) 
+                                    expandirDetalhes = -1;
+                                else 
+                                    expandirDetalhes = al.AlimentoID; 
+                            })></button>
+                            <p>@al.nome</p>
+                        </div>
+                        @if (expandirDetalhes == al.AlimentoID)
                         {
-                            <div class="result_alim">
-                                <button class="oi oi-plus" onclick=@(() => AdicionarAlimento(al))></button>
-                                <p value=@al.AlimentoID>@al.nome</p>
+                            <div class="add_alimento_conf">
+                                <span>Quantidade: </span>
+                                <InputNumber @bind-Value=quantidade />
+                                <select @bind=@medida>
+                                    <option selected value=@(10)>1 Colher (10g)</option>
+                                    <option value=@(30.0)>1 Fatia (30g)</option>
+                                    <option value=@(200.0)>1 Copo (200ml)</option>
+                                    <option value=@(1)>g/ml</option>
+                                </select>
+                                <button class="btn-diario-alt" @onclick=@(() => AdicionarAlimento(al))>Adicionar</button>
                             </div>
                         }
-                    </div>
-                }
+                    }
+                </div>
             }
         </div>
+        }
     }
 </div>
 
 @code {
     [Parameter]
-    public Action<Porcao> refSetter { get; set; }
+    public Refeicao refeicao { get; set; }
+
+    [Parameter]
+    public Action callbackAtualizar { get; set; }
 
     private bool mostrarBusca { get; set; } = false;
     private string buscaDigitada { get; set; } = "";
     private double quantidade { get; set; } = 1;
+    private double medida { get; set; } = 1;
+
+    private System.Timers.Timer debounceBusca { get; set; }
     private ICollection<Alimento> encontrados { get; set; }
+    private int expandirDetalhes { get; set; } = -1;
 
     protected override void OnInitialized()
     {
         encontrados = new List<Alimento>();
+        debounceBusca = new System.Timers.Timer() { AutoReset = false, Enabled = false, Interval = 400 };
+        debounceBusca.Elapsed += async (e, o) => await BuscarAlimento(); ;
     }
 
-    private void AdicionarAlimento(Alimento al)
+    private async void AdicionarAlimento(Alimento al)
     {
-        refSetter.Invoke(new Porcao() { Alimento = al, quantidade = (quantidade / 100), alimentoID = al.AlimentoID });
+        var novaPorcao = (new Porcao() { Alimento = al, quantidade = (medida * quantidade) / 100, alimentoID = al.AlimentoID });
+        refeicao.AdicionarPorcao(novaPorcao);
+        await _porcaoService.SetPorcao(novaPorcao);
         mostrarBusca = !mostrarBusca;
         quantidade = 1;
+        callbackAtualizar();
     }
 
-    private void BuscaDigitadaHandler(KeyboardEventArgs e)
+    private async Task BuscaDigitadaHandler(KeyboardEventArgs e)
     {
-        Console.WriteLine(e.Key);
+        if (e.Key == "Enter")
+            await BuscarAlimento();
+        else
+        {
+            if (!debounceBusca.Enabled)
+                debounceBusca.Start();
+            else
+                debounceBusca.Interval = 400;
+        }
     }
 
     private async Task BuscarAlimento()
     {
-        if (buscaDigitada.Length == 0) return;
-        var al = await alimentoService.GetPorNome(buscaDigitada);
+        Console.WriteLine("busca");
+        if (buscaDigitada.Length == 0) 
+            return;
+        var al = await _alimentoService.GetPorNome(buscaDigitada);
         if (al != null && al.Any())
+        {
             encontrados = al;
+            StateHasChanged();
+        }
     }
 }

@@ -1,19 +1,17 @@
 ﻿@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
 @inject AlimentoService alimentoService
-@inject PorcaoService pocaoSerice
-@inject DiarioService diarioService
 
 <div class="porcao_view">
     <div class="porcao_container">
-        <p class="alimento_nome">@_porcao.Alimento.nome</p>
-        <p class="alimento_quantidade">Quantidade: @(_porcao.quantidade * 100)g</p>
-        <p class="alimento_energia">Energia: @(_porcao.Alimento.informacao.Centesimal.energiaKcal * _porcao.quantidade)kcal</p>
+        <p class="alimento_nome">@porcao.Alimento.nome</p>
+        <p class="alimento_quantidade">Quantidade: @(porcao.quantidade * 100) g/ml</p>
+        <p class="alimento_energia">Energia: @(Math.Round(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</p>
         <div class="alimento_btn">
             <button @onclick=@(() => detalhes = !detalhes)
-                    class="oi @(detalhes ? "oi-minus" : "oi-plus")"><span>Detalhes</span>
+                    class="btn-diario-alt oi @(detalhes ? "oi-minus" : "oi-plus")"><span>Detalhes</span>
             </button>
-            <button class="oi oi-circle-x" @onclick=RemoverPorcao><span>Remover</span></button>
+            <button class="btn-diario-alt oi oi-circle-x" @onclick=@(() => callbackDelete(porcao))><span>Remover</span></button>
         </div>
     </div>
     @if (detalhes)
@@ -31,30 +29,30 @@
                 <tbody>
                     <tr>
                         <td scope="row">Energia</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Centesimal.energiaKcal * _porcao.quantidade) kcal</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade) kcal</td>
                     </tr>
                     <tr>
                         <td scope="row">Carboidratos</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Centesimal.carboidrato * _porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.carboidrato * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="row">Gorduras</td>
                     </tr
                     <tr>
                         <td scope="col" class="px-5">Saturadas</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Gorduras.sat * _porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.sat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Monoinsaturadas</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Gorduras.monoinsat * _porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.monoinsat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Poliinsaturadas</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Gorduras.poliinsat * _porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.poliinsat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="row">Fibras</td>
-                        <td scope="row">@(_porcao.Alimento.informacao.Centesimal.fibras * _porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.fibras * porcao.quantidade)g</td>
                     </tr>
                 </tbody>
             </table>
@@ -64,23 +62,22 @@
 
 @code {
     [Parameter]
-    public Porcao _porcao { get; set; }
+    public Porcao porcao { get; set; }
+
+    [Parameter]
+    public Action<Porcao> callbackDelete { get; set; }
+
     private bool detalhes = false;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
-        if (parameters.TryGetValue<Porcao>(nameof(_porcao), out var value))
+        if (parameters.TryGetValue<Porcao>(nameof(porcao), out var value))
         {
             if (value.Alimento == null)
                 value.Alimento = await alimentoService.GetPorID(value.alimentoID);
-            _porcao = value;
+            porcao = value;
         }
         await base.SetParametersAsync(ParameterView.Empty);
-    }
-
-    private async Task RemoverPorcao()
-    {
-        await pocaoSerice.RemovePorcao(_porcao);
     }
 }

@@ -2,8 +2,8 @@
 @using diarioAlimentar.Shared;
 @inject RefeicaoService _refeicaoService;
 
-<button class="btn btn-primary" @onclick=@(() => novaRefeicao = !novaRefeicao)>Adicionar Refeicao</button>
-@if (novaRefeicao)
+<button class="btn-diario" @onclick=@(() => mostrar = !mostrar)>Adicionar Refeicao</button>
+@if (mostrar)
 {
     <div>
         <p>Periodo: </p>
@@ -13,7 +13,7 @@
                 <option value="@pr" "@(pr == GetPeriodoatual() ? "selected" : "")">@pr</option>
             }
         </select>
-        <button @onclick=@(async () => AdicionarRefeicao(new Refeicao() { periodo = periodoSelecionado }))>Adicionar</button>
+        <button @onclick=@(async () => CriarNovaRefeicao(new Refeicao() { periodo = periodoSelecionado }))>Adicionar</button>
     </div>
 }
 
@@ -21,12 +21,17 @@
     [Parameter]
     public Diario diarioAtual { get; set; }
 
-    private Periodo periodoSelecionado { get; set; } = Periodo.Lanche;
-    private bool novaRefeicao { get; set; } = false;
+    [Parameter]
+    public Action callbackAtualizar { get; set; }
 
-    private async void AdicionarRefeicao(Refeicao novaRefeicao)
+    private Periodo periodoSelecionado { get; set; } = Periodo.Lanche;
+    private bool mostrar { get; set; } = false;
+
+    private async void CriarNovaRefeicao(Refeicao novaRefeicao)
     {
         diarioAtual.AdicionarRefeicao(novaRefeicao);
         await _refeicaoService.AddRefeicao(novaRefeicao);
+        mostrar = false;
+        callbackAtualizar();
     }
 }

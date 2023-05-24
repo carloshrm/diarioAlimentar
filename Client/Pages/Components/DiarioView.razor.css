@@ -1,6 +1,11 @@
 ﻿#diario_container {
-    background-color: var(--light-bg);
-    border-color: var(--dark-fg);
-    padding: 2em;
-    border: 1px solid var(--dark-fg);
+    margin: 2em auto;
+    width: 80%;
+}
+
+@media only screen and (max-width: 800px) {
+    #diario_container {
+        width: 100%;
+        margin: 1em 0;
+    }
 }
