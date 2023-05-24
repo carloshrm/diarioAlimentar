@@ -1,11 +1,17 @@
 ﻿@page "/"
 @using diarioAlimentar.Client.Pages.Components
 
-<PageTitle>Index</PageTitle>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<DiarioView />
-
+<PageTitle>Diario Alimentar</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <DiarioView />
+    </Authorized>
+    <NotAuthorized>
+        <div class="container-transp">
+            <h2>Bem vindo!</h2>
+            <p>Entre com sua conta ou crie uma nova.</p>
+            <a href="authentication/login">Entrar</a>
+            <a href="authentication/register">Registrar</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
