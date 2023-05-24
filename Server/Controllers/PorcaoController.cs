@@ -19,22 +19,30 @@ namespace diarioAlimentar.Server.Controllers
             _ctx = diarioContext;
         }
 
-        [HttpPost("update")]
-        public async Task<ActionResult<Porcao>> UpdatePorcao(Porcao p)
+        [HttpPost("set")]
+        public async Task<ActionResult<Porcao>> SetPorcao(Porcao p)
         {
-            var porcaoDB = _ctx.Porcoes.First(r => r.porcaoID == p.porcaoID);
-            _ctx.Porcoes.Update(porcaoDB);
+            var porcaoExistente = _ctx.Porcoes.FirstOrDefault(pc => pc.porcaoID == p.porcaoID);
+            if (porcaoExistente == null)
+                _ctx.Porcoes.Add(p);
+            else
+                _ctx.Porcoes.Update(p);
+
             await _ctx.SaveChangesAsync();
-            return Ok();
+            return Ok(p);
         }
 
         [HttpGet("del/{pID}")]
         public async Task<ActionResult<Diario>> RemovePorcao(Guid pID)
         {
-            var porcaoDB = _ctx.Porcoes.First(r => r.porcaoID == pID);
-            _ctx.Porcoes.Remove(porcaoDB);
-            await _ctx.SaveChangesAsync();
-            return Ok();
+            var porcaoDB = _ctx.Porcoes.FirstOrDefault(r => r.porcaoID == pID);
+            if (porcaoDB == null) return BadRequest();
+            else
+            {
+                _ctx.Porcoes.Remove(porcaoDB);
+                await _ctx.SaveChangesAsync();
+                return Ok();
+            }
         }
     }
 }

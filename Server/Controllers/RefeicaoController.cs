@@ -22,7 +22,7 @@ namespace diarioAlimentar.Server.Controllers
         {
             var refExistente = _ctx.Refeicoes.FirstOrDefault(r => r.refeicaoID == rf.refeicaoID);
             if (refExistente != null)
-                return BadRequest();
+                _ctx.Refeicoes.Update(rf);
             else
             {
                 _ctx.Refeicoes.Add(rf);
@@ -40,7 +40,10 @@ namespace diarioAlimentar.Server.Controllers
             if (refExistente == null)
                 return BadRequest();
             else
+            {
                 _ctx.Refeicoes.Update(rf);
+                _ctx.Porcoes.Where(p => p.refeicaoID == rf.refeicaoID).ToList();
+            }
 
             await _ctx.SaveChangesAsync();
             return Ok(refExistente);

@@ -40,6 +40,7 @@ public class DiarioController : ControllerBase
         if (diarioHoje == null)
         {
             var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
+            novoDiario.AdicionarRefeicao(new Refeicao());
             _ctx.Diarios.Add(novoDiario);
             await _ctx.SaveChangesAsync();
             return Ok(novoDiario);
