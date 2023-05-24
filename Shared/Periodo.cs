@@ -2,8 +2,8 @@
 
 public enum Periodo
 {
-    Lanche = 0,
-    Manha = 1,
-    Almoco = 2,
-    Janta = 3
+    Manha = 0,
+    Almoco = 1,
+    Janta = 2,
+    Lanche = 3
 };

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 namespace diarioAlimentar.Shared;
 
@@ -9,6 +10,7 @@ public class Refeicao
 
     public ICollection<Porcao> Porcoes { get; set; } = new List<Porcao>();
     public Periodo periodo { get; set; }
+    public TimeOnly horario { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
     public Guid diarioID { get; set; }
 

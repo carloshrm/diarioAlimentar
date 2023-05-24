@@ -1,8 +1,11 @@
 global using diarioAlimentar.Shared;
 using System.Security.Claims;
 
+using diarioAlimentar.Server.Controllers;
 using diarioAlimentar.Server.Data;
 using diarioAlimentar.Server.Models;
+
+using IdentityModel;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -15,10 +18,10 @@ namespace diarioAlimentar
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+
+            builder.Services.AddSingleton<AlimentoProvider>();
             builder.Services.AddScoped<ApplicationUserClaimsPrincipalFactory>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -49,10 +52,10 @@ namespace diarioAlimentar
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt()
                 .AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-            });
+                {
+                    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

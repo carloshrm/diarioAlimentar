@@ -10,10 +10,14 @@ public class Porcao
 
     [NotMapped]
     public Alimento Alimento { get; set; } 
-
     public int alimentoID { get; set; }
     public double quantidade { get; set; }
 
     public Guid refeicaoID { get; set; }
+
+    public Porcao()
+    {
+            
+    }
 
 }

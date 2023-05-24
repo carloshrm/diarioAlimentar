@@ -28,4 +28,9 @@ public readonly struct Gorduras
             trans = a.trans * b,
         };
     }
+
+    public double GetGordurasTotais()
+    {
+        return monoinsat + poliinsat + sat + trans;
+    }
 }
