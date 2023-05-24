@@ -2,6 +2,15 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    height: 100%;
+
+}
+
+footer {
+    align-self: flex-end;
+    width: 100%;
+    padding: 0.4em 0;
+    background-color: white;
 }
 
 main {
