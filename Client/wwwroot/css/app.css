@@ -1,16 +1,75 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
 
+@media only screen and (max-width: 600px) {
+    * {
+        font-size: 10px;
+    }
+}
+
+@media only screen and (max-width: 850px) {
+    * {
+        font-size: 12px;
+    }
+}
+
 :root {
-    --light-bg: #FFF4E0;
-    --light-fg: #FFBF9B; 
-    --dark-fg: #B46060;
-    --dark-bg: #4D4D4D;
+    --light-bg: #68904D;
+    --light-fg: #EE9B01;
+    --dark-fg: #DA6A00;
+    --dark-bg: #14471E;
+    --light-m: #c8d2c1;
+    --light-m-t: #c8d2C1B0;
+    --white-t: #FFFFFF50;
 }
 
 html, body {
+    height: 100%;
+    background-image: url("../img/pexels-lukas-349610.jpg");
+    background-size: cover;
+    background-attachment: fixed;
     font-family: 'Nunito', sans-serif;
 }
+
+button {
+    margin: 0 0.4em;
+}
+
+.btn-diario, .btn-diario-alt, .btn-diario-ct {
+    border: none;
+    padding: 0.4em 0.8em;
+    color: white;
+}
+
+.btn-diario {
+    background-color: var(--dark-bg);
+    color: white;
+}
+
+.btn-diario-alt {
+    background-color: var(--light-bg);
+    color: white;
+}
+
+.btn-diario-ct {
+    background-color: var(--dark-fg);
+    color: white;
+}
+
+.bg-light-fg {
+    background-color: var(--light-fg);
+}
+
+.container-transp {
+    box-shadow: 2px 2px 10px 1px gray;
+    backdrop-filter: blur(10px) brightness(108%);
+    border: 2px solid white;
+}
+
+#app {
+    height: 100%;
+}
+
 
 h1:focus {
     outline: none;
