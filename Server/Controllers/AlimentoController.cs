@@ -6,9 +6,9 @@ namespace diarioAlimentar.Server.Controllers;
 [Route("[controller]")]
 public class AlimentoController : ControllerBase
 {
-    private AlimentoProvider _provider;
+    private IAlimentoProvider _provider;
 
-    public AlimentoController(AlimentoProvider provider)
+    public AlimentoController(AlimentosJSON provider)
     {
         _provider = provider;
     }
@@ -16,7 +16,7 @@ public class AlimentoController : ControllerBase
     [HttpGet("id/{id}")]
     public async Task<ActionResult<Alimento>> GetAlimentoPorID(int id)
     {
-        _provider.alimentos.TryGetValue(id, out var resultado);
+        var resultado = _provider.GetAlimentoPorID(id);
         if (resultado != null)
             return Ok(resultado);
         else
@@ -26,7 +26,7 @@ public class AlimentoController : ControllerBase
     [HttpGet("nome/{nome}")]
     public async Task<ActionResult<ICollection<Alimento>>> GetAlimentoPorNome(string nome)
     {
-        var resultado = _provider.alimentos.Where(a => a.Value.nome.ToLower().Contains(nome)).Select(a => a.Value);
+        var resultado = _provider.BuscarAlimentosPorNome(nome);
         return Ok(resultado);
     }
 }

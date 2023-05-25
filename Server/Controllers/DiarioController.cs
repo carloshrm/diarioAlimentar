@@ -21,9 +21,9 @@ namespace diarioAlimentar.Server.Controllers;
 public class DiarioController : ControllerBase
 {
     private readonly ApplicationDbContext _ctx;
-    private readonly AlimentoProvider _provider;
+    private readonly IAlimentoProvider _provider;
 
-    public DiarioController(ApplicationDbContext diarioContext, AlimentoProvider alimentoProvider)
+    public DiarioController(ApplicationDbContext diarioContext, AlimentosJSON alimentoProvider)
     {
         _ctx = diarioContext;
         _provider = alimentoProvider;
@@ -53,7 +53,7 @@ public class DiarioController : ControllerBase
                 _ctx.Porcoes
                     .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
                     .ToList()
-                    .ForEach(p => p.Alimento = _provider.alimentos.GetValueOrDefault(p.alimentoID));
+                    .ForEach(p => p.Alimento = _provider.GetAlimentoPorID(p.alimentoID));
 
             return Ok(diarioHoje);
         }
