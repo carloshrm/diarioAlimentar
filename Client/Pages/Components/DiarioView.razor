@@ -85,14 +85,7 @@
         Enum.TryParse(auth.User.Claims.First(c => c.Type.Contains("atividade")).Value, out NivelAtividade nivelAtividade);
 
         return (10 * peso) + (6.25 * altura) - (5 * idade) + (sexo == Sexo.masculino ? 5 : -161)
-            * (nivelAtividade switch
-            {
-                NivelAtividade.Sedentario => 1.2,
-                NivelAtividade.AtivoLeve => 1.375,
-                NivelAtividade.AtivoModerado => 1.55,
-                NivelAtividade.AtivoMuito => 1.725,
-                NivelAtividade.AtivoExtremo => 1.9,
-            });
+            * (NivelAtividadeHelper.GetValorAtividade(nivelAtividade));
     }
 
     private InfoNutricional CalcularRelatorioGeral()

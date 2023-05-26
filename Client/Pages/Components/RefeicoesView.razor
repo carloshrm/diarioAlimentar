@@ -25,16 +25,17 @@
                     {
                         <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar/>
                     }
-                    <button @onclick=@(() => confirmarRemocao = !confirmarRemocao)>X</button>
+                    <button class="oi oi-delete" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>X</button>
                     @if (confirmarRemocao)
                     {
                         <div>
                             <p>Tem certeza que deseja remover essa refeição e todos os alimentos registrados?</p>
-                            <button @onclick=@(async () => {
-                                await _refeicaoService.RemoveRefeicao(refGravada);
-                                StateHasChanged();
-                            })>OK</button>
-                            <button>CCL</button>
+                            <button @onclick=@(async () => 
+                                {
+                                    await _refeicaoService.RemoveRefeicao(refGravada);
+                                    StateHasChanged();
+                                })>OK</button>
+                            <button>Cancelar</button>
                         </div>
                     }
                 </div>
