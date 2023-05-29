@@ -1,15 +1,16 @@
-﻿#alimento_form_cont {
-    background-color: var(--white-t);
+﻿#alimento-form-cont {
+    backdrop-filter: brightness(0.9);
+    padding: 0.8em;
 }
 
-#busca_alimento_resultados {
+#busca-alimento-resultados {
     max-height: 30vh;
     overflow-y: scroll;
     padding: 2em 1em;
-    background-color: var(--light-m);
+    border: 2px solid white;
 }
 
-.busca_alimento_unidade {
+.busca-alimento-unidade {
     margin: 0.4em 0;
     display: flex;
     padding: 0.4em 0;
@@ -17,15 +18,10 @@
     background-color: white;
 }
 
-.busca_alimento_unidade p {
+.busca-alimento-unidade p {
     margin: 0 1em;
 }
 
-.add_alimento_conf {
+.add-alimento-conf {
     margin: 0 4em;
-}
-
-button {
-    border: none;
-    padding: 0.4em;
 }

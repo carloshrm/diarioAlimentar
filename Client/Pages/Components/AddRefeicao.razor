@@ -2,20 +2,22 @@
 @using diarioAlimentar.Shared;
 @inject RefeicaoService _refeicaoService;
 
-<button class="btn-diario" @onclick=@(() => mostrar = !mostrar)>Adicionar Refeicao</button>
-@if (mostrar)
-{
-    <div>
-        <p>Periodo: </p>
-        <select @bind=@periodoSelecionado>
-            @foreach (var pr in Enum.GetValues(typeof(Periodo)))
-            {
-                <option value="@pr" "@(pr == GetPeriodoatual() ? "selected" : "")">@pr</option>
-            }
-        </select>
-        <button @onclick=@(async () => CriarNovaRefeicao(new Refeicao() { periodo = periodoSelecionado }))>Adicionar</button>
-    </div>
-}
+<div id="add-ref-view">
+    <button class="btn-diario" @onclick=@(() => mostrar = !mostrar)>Adicionar Refeicao</button>
+    @if (mostrar)
+    {
+        <div id="adicionar-ref-container">
+            <h4>Periodo: </h4>
+            <select @bind=@periodoSelecionado>
+                @foreach (var pr in Enum.GetValues(typeof(Periodo)))
+                {
+                    <option value="@pr" "@(pr == GetPeriodoatual() ? "selected" : "")">@pr</option>
+                }
+            </select>
+            <button class="btn-diario-ct" @onclick=@(async () => CriarNovaRefeicao(new Refeicao() { periodo = periodoSelecionado }))>Adicionar</button>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter]

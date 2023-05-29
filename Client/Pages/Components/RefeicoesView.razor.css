@@ -1,5 +1,6 @@
 ﻿#refeicoes-container {
-    padding: 0.4em 2em;
+    padding: 2em;
+    backdrop-filter: brightness(0.9);
 }
 
 @media only screen and (max-width: 800px) {

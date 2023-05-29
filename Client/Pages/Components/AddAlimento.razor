@@ -3,29 +3,26 @@
 @inject AlimentoService _alimentoService
 @inject PorcaoService _porcaoService
 
-<div id="alimento_form_cont">
-    <button class="btn-diario" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar Alimento</button>
+<div id="alimento-form-cont">
+    <button class="btn-diario m-2" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar Alimento</button>
     @if (mostrarBusca)
     {
-        <div>
-            <p>Adicionar um alimento: </p>
-            <div class="mx-4">
-                <span class="oi oi-magnifying-glass"></span>
-                <input id="busca" @bind=@buscaDigitada @bind:event="oninput" @onkeyup="BuscaDigitadaHandler" />
-                <button class="btn-diario-alt" @onclick="BuscarAlimento">Procurar</button>
-            </div>
+        <div class="mx-4">
+            <span class="oi oi-magnifying-glass"></span>
+            <input id="busca" @bind=@buscaDigitada @bind:event="oninput" @onkeyup="BuscaDigitadaHandler" />
+            <button class="btn-diario-alt" @onclick="BuscarAlimento">Procurar</button>
         </div>
         @if (encontrados.Any())
         {
-        <div id="busca_alimento_resultados">
+        <div id="busca-alimento-resultados">
             @foreach (var cat in encontrados.GroupBy(a => a.categoria))
             {
                 <div>
                     <h4>@cat.Key.GetNomeCategoria()</h4>
                     @foreach (var al in cat)
                     {
-                        <div class="busca_alimento_unidade">
-                            <button class="oi oi-plus" @onclick=@(() => { 
+                        <div class="busca-alimento-unidade">
+                            <button class="btn btn-diario-alt oi oi-plus" @onclick=@(() => { 
                                 if (expandirDetalhes == al.AlimentoID) 
                                     expandirDetalhes = -1;
                                 else 
@@ -35,7 +32,7 @@
                         </div>
                         @if (expandirDetalhes == al.AlimentoID)
                         {
-                            <div class="add_alimento_conf">
+                            <div class="add-alimento_conf">
                                 <span>Quantidade: </span>
                                 <InputNumber @bind-Value=quantidade />
                                 <select @bind=@medida>

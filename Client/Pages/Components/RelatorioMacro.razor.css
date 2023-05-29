@@ -1,5 +1,5 @@
 ﻿tr {
-    background-color: var(--light-m-t);
+    backdrop-filter: brightness(0.9);
 }
 
 #relatorio_cont {

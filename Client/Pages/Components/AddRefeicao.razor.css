@@ -1,0 +1,10 @@
+﻿#adicionar-ref-container {
+    margin: 0 2em;
+    border: 2px solid white;
+    padding: 0 1em;
+    backdrop-filter: brightness(0.9)
+}
+
+#add-ref-view {
+    margin: 0.8em;
+}
