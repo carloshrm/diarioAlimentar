@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "diarioAlimentar.Client", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "diarioAlimentar.Shared", "Shared\diarioAlimentar.Shared.csproj", "{330C825F-6FB5-40C1-911D-80A6EF35D5E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nutr-pdf-parser", "..\nutr-pdf-parser\nutr-pdf-parser.csproj", "{5B7BB007-DDDF-4646-A156-4B7863D052AC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{330C825F-6FB5-40C1-911D-80A6EF35D5E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{330C825F-6FB5-40C1-911D-80A6EF35D5E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{330C825F-6FB5-40C1-911D-80A6EF35D5E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B7BB007-DDDF-4646-A156-4B7863D052AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B7BB007-DDDF-4646-A156-4B7863D052AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B7BB007-DDDF-4646-A156-4B7863D052AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B7BB007-DDDF-4646-A156-4B7863D052AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
