@@ -5,39 +5,41 @@
 
 @foreach (var refPeriodo in listaLocal)
 {
-    <div class="border border-4 m-2">
-        <h2>@refPeriodo.Key</h2>
+    <div id="refeicoes-container">
+        <h3><div class="oi oi-book mx-2"></div>@refPeriodo.Key.GetEnumDisplay()</h3>
         <div>
             @foreach (var refGravada in refPeriodo)
             {
                 @if (refeicaoAtiva == null) refeicaoAtiva = refGravada;
 
-                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-2 @(refeicaoAtiva == refGravada ? "shadow" : "")">
+                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-2 @(refeicaoAtiva == refGravada ? "ref-ativa" : "")">
                     <div>
-                        <p>Adicionada as: @refGravada.horario.ToShortTimeString()</p>
+                        <p>Horário: @refGravada.horario.ToShortTimeString()</p>
                         <h4>Alimentos: </h4>
                         @foreach (var p in refGravada.Porcoes)
                         {
-                            <PorcaoView porcao=p callbackDelete=@(async (p) => await RemoverPorcao(p))/>
+                            <PorcaoView porcao=p ativa=@(refeicaoAtiva == refGravada) callbackDelete=@(async (p) => await RemoverPorcao(p)) />
                         }
                     </div>
                     @if (refeicaoAtiva == refGravada)
                     {
                         <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar/>
                     }
-                    <button class="oi oi-delete" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>X</button>
+
+                    <button class="btn-diario-ct-alt oi oi-trash" @onclick=@(() => confirmarRemocao = !confirmarRemocao)></button>
                     @if (confirmarRemocao)
                     {
                         <div>
                             <p>Tem certeza que deseja remover essa refeição e todos os alimentos registrados?</p>
-                            <button @onclick=@(async () => 
+                            <button class="btn-diario-ct-alt" @onclick=@(async () => 
                                 {
                                     await _refeicaoService.RemoveRefeicao(refGravada);
                                     StateHasChanged();
-                                })>OK</button>
-                            <button>Cancelar</button>
+                                })>Sim</button>
+                            <button class="btn-diario-ct-alt" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>Não</button>
                         </div>
                     }
+
                 </div>
             }
         </div>

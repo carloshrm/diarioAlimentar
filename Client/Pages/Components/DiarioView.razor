@@ -7,15 +7,17 @@
 @implements IDisposable;
 @inject DiarioService _diarioService;
 
-<div class="container-md container-transp" id="diario_container">
-    <h1>Diário Alimentar</h1>
+<div class="container-md" id="diario-container">
     @if (diarioAtual != null)
     {
-        <div>
-            <p class="mx-4">Data: @diarioAtual.data.ToString("dd/MM/yyyy")</p>
+        <div class="container-transp" id="diario-titulo">
+            <h1>Diário Alimentar</h1>
+            <h5>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
+        </div>
+        <div class="container-transp">
             <RelatorioMacro bmr=@bmr relatorio=@relatorio />
         </div>
-        <div>
+        <div class="container-transp p-2 my-4">
             <h2>Refeições</h2>
             <RefeicoesView refeicoes=@diarioAtual.Refeicoes callbackAtualizar=@atualizarRelatorio />
             <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarRelatorio />

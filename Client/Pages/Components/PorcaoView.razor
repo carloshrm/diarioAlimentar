@@ -2,12 +2,12 @@
 @using diarioAlimentar.Shared;
 @inject AlimentoService alimentoService
 
-<div class="porcao_view">
-    <div class="porcao_container">
-        <p class="alimento_nome">@porcao.Alimento.nome</p>
-        <p class="alimento_quantidade">Quantidade: @(porcao.quantidade * 100) g/ml</p>
-        <p class="alimento_energia">Energia: @(Math.Round(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</p>
-        <div class="alimento_btn">
+<div class="porcao-view">
+    <div class=@("porcao-container" + (ativa ? "-at" : ""))>
+        <p class="alimento-nome">@porcao.Alimento.nome</p>
+        <p class="alimento-quantidade">Quantidade: @(porcao.quantidade * 100) g/ml</p>
+        <p class="alimento-energia">Energia: @(Math.Round(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</p>
+        <div class="alimento-btn">
             <button @onclick=@(() => detalhes = !detalhes)
                     class="btn-diario-alt oi @(detalhes ? "oi-minus" : "oi-plus")"><span>Detalhes</span>
             </button>
@@ -16,9 +16,8 @@
     </div>
     @if (detalhes)
     {
-        <div class="porcao_detalhes">
-            <h4>Informações Nutricionais</h4>
-            <table class="porc_info_nut table">
+        <div class="porcao-detalhes">
+            <table class="info-nt table">
                 <thead>
                     <tr>
                         <th scope="col">Info</th>
@@ -66,6 +65,9 @@
 
     [Parameter]
     public Action<Porcao> callbackDelete { get; set; }
+
+    [Parameter]
+    public bool ativa { get; set; }
 
     private bool detalhes = false;
 
