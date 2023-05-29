@@ -1,5 +1,5 @@
 ﻿.porcao-view {
-    margin: 0.4em;
+    margin: 0.6em 0;
     color: white;
 }
 
@@ -20,20 +20,27 @@ table {
     background-color: var(--light-bg);
 }
 
-.porcao-container-at {
-    background-color: var(--dark-bg);
+.porcao-at {
+    background-color: var(--dark-bg) !important;
+}
+
+.porcao-at .alimento-nome {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 p {
     margin: 0.4em 0.8em;
 }
 
-.alimento-nome {
-    font-size: 1.2em;
+.alimento-btn {
+    display: flex;
+    margin-left: auto;
 }
 
 @media only screen and (max-width: 900px) {
     .alimento-btn {
+        max-width: fit-content;
         flex-direction:column;
         margin: 0;
     }
@@ -42,9 +49,4 @@ p {
 button span {
     margin: 0.4em;
     font-family: 'Nunito', sans-serif;
-}
-
-.alimento-btn {
-    display: flex;
-    margin-left: auto;
 }
