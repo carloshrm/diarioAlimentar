@@ -5,6 +5,13 @@
     * {
         font-size: 10px;
     }
+
+    .btn-diario,
+    .btn-diario-alt,
+    .btn-diario-ct,
+    .btn-diario-ct-alt {
+        padding: 0;
+    }
 }
 
 @media only screen and (max-width: 850px) {
@@ -15,6 +22,7 @@
 
 :root {
     --light-bg: #68904D;
+    --light-bg-t: #68904DB0;
     --light-fg: #EE9B01;
     --dark-fg: #DA6A00;
     --dark-bg: #14471E;
@@ -35,7 +43,16 @@ button {
     margin: 0 0.4em;
 }
 
-.btn-diario, .btn-diario-alt, .btn-diario-ct {
+.ref-ativa {
+    box-shadow: 2px 2px 8px 1px gray;
+    padding: 2em;
+    border: 2px solid white;
+}
+
+.btn-diario,
+.btn-diario-alt,
+.btn-diario-ct,
+.btn-diario-ct-alt {
     border: none;
     padding: 0.4em 0.8em;
     color: white;
@@ -53,6 +70,11 @@ button {
 
 .btn-diario-ct {
     background-color: var(--dark-fg);
+    color: white;
+}
+
+.btn-diario-ct-alt {
+    background-color: var(--light-fg);
     color: white;
 }
 
