@@ -11,6 +11,11 @@
     @if (diarioAtual != null)
     {
         <div class="container-transp" id="diario-titulo">
+            <button @onclick=@(async () => {
+                var data = diarioAtual.data.Subtract(TimeSpan.FromDays(1));
+                Console.WriteLine(data.ToString());
+                await _diarioService.GetDiarioPorData(data);
+            })>teste</button>
             <h1>Diário Alimentar</h1>
             <h5>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
         </div>
