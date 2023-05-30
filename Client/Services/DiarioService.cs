@@ -13,18 +13,18 @@ namespace diarioAlimentar.Client.Services
             _http = client;
         }
 
-        public async Task<Diario> GetDiarioHoje()
+        public async Task<Diario?> GetDiarioHoje()
         {
             var diarioRequest = await _http.GetAsync($"/diario/hoje");
             if (diarioRequest.IsSuccessStatusCode)
                 return await diarioRequest.Content.ReadFromJsonAsync<Diario>();
             else
-                return new Diario();
+                return null;
         }
 
         public async Task<Diario?> GetDiarioPorData(DateTime data)
         {
-            var diarioRequest = await _http.GetAsync($"/diario/data/{data}");
+            var diarioRequest = await _http.GetAsync($"/diario/data/{data.ToString("yyyy-MM-dd")}");
             if (diarioRequest.IsSuccessStatusCode)
                 return await diarioRequest.Content.ReadFromJsonAsync<Diario>();
             else
