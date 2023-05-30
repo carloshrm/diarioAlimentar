@@ -93,10 +93,15 @@ public class DiarioController : ControllerBase
     }
 
     [HttpGet("data/{data}")]
-    public async Task<ActionResult<Diario>> GetDiarioPorData(DateTime data)
+    public async Task<ActionResult<Diario>> GetDiarioPorData(string data)
     {
-        var idUsuarioRequest = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-        var diarioPorData = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == data.Date);
+        if (!DateTime.TryParse(data, out DateTime dataParse))
+            return BadRequest(data);
+
+        var idUsuarioRequest = HttpContext.User.Claims
+            .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+        var diarioPorData = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == dataParse.ToUniversalTime().Date);
         if (diarioPorData != null)
             return Ok(diarioPorData);
         else
