@@ -53,8 +53,8 @@ namespace diarioAlimentar
                 .AddIdentityServerJwt()
                 .AddGoogle(googleOptions =>
                 {
-                    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                    googleOptions.ClientId = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientId"];
+                    googleOptions.ClientSecret = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientSecret"];
                 });
 
             builder.Services.AddControllersWithViews();
