@@ -50,7 +50,12 @@ namespace diarioAlimentar
                 });
 
             builder.Services.AddAuthentication()
-                .AddIdentityServerJwt();
+                .AddIdentityServerJwt()
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientId"];
+                    googleOptions.ClientSecret = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientSecret"];
+                });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
