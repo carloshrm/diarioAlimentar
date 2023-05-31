@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'diario-alimentar'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC22CB3273214028ABBA06BA33FA9977 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_510564FD46B44934BFC6E843FE975630 }}
           package: .
