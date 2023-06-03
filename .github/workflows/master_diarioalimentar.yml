@@ -51,7 +51,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'diarioalimentar'
+          app-name: 'diario-alimentar'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E2BF1BA1DE8D4FB88BF36ED8E8C1F159 }}
           package: .
