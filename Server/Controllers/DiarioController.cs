@@ -143,7 +143,7 @@ public class DiarioController : ControllerBase
         var diariosDaSemana = new List<Diario>();
         for (int i = 0; i < 7; i++)
         {
-            DateTime diasAnteriores = DateTime.Now.Subtract(TimeSpan.FromDays(i));
+            DateTime diasAnteriores = DateTime.Now.ToUniversalTime().Subtract(TimeSpan.FromDays(i));
             var diarioGravado = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == diasAnteriores.ToUniversalTime().Date);
             if (diarioGravado == null)
             {
