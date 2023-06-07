@@ -31,6 +31,15 @@ namespace diarioAlimentar.Client.Services
                 return null;
         }
 
+        public async Task<IEnumerable<Diario>> GetDiariosSemana()
+        {
+            var diarioRequest = await _http.GetAsync($"/diario/sem/");
+            if (diarioRequest.IsSuccessStatusCode)
+                return await diarioRequest.Content.ReadFromJsonAsync<IEnumerable<Diario>>();
+            else
+                return null;
+        }
+
         public async Task<Diario?> SetDiario(Diario diario)
         {
             var diarioRequest = await _http.PostAsJsonAsync($"/diario/set", diario);

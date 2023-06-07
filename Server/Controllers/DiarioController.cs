@@ -23,7 +23,7 @@ public class DiarioController : ControllerBase
     private readonly ApplicationDbContext _ctx;
     private readonly IAlimentoProvider _provider;
 
-    public DiarioController(ApplicationDbContext diarioContext, AlimentosJSON alimentoProvider)
+    public DiarioController(ApplicationDbContext diarioContext, IAlimentoProvider alimentoProvider)
     {
         _ctx = diarioContext;
         _provider = alimentoProvider;
@@ -34,6 +34,7 @@ public class DiarioController : ControllerBase
     {
         var idUsuarioRequest = HttpContext.User.Claims
             .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
         var diarioHoje = _ctx.Diarios
             .FirstOrDefault(d => d.usuarioID == idUsuarioRequest && d.data.Date == DateTime.Now.ToUniversalTime().Date);
 
@@ -101,10 +102,63 @@ public class DiarioController : ControllerBase
         var idUsuarioRequest = HttpContext.User.Claims
             .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
+
         var diarioPorData = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == dataParse.ToUniversalTime().Date);
         if (diarioPorData != null)
+        {
+            PreencherDiario(diarioPorData);
             return Ok(diarioPorData);
+        }
         else
-            return NotFound();
+        {
+            var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
+            novoDiario.data = dataParse.ToUniversalTime();
+            novoDiario.AdicionarRefeicao(new Refeicao());
+            _ctx.Diarios.Add(novoDiario);
+            await _ctx.SaveChangesAsync();
+            return Ok(novoDiario);
+        }
+    }
+
+    private void PreencherDiario(Diario d)
+    {
+        foreach (var dbRefeicao in 
+            _ctx.Refeicoes
+                .Where(r => r.diarioID == d.diarioID)
+                .ToList())
+        {
+            _ctx.Porcoes
+                .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
+                .ToList()
+                .ForEach(p => p.Alimento = _provider.GetAlimentoPorID(p.alimentoID));
+        }
+    }
+
+    [HttpGet("sem")]
+    public async Task<ActionResult<IEnumerable<Diario>>> GetDiariosSemana()
+    {
+        var idUsuarioRequest = HttpContext.User.Claims
+            .First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+        var diariosDaSemana = new List<Diario>();
+        for (int i = 0; i < 7; i++)
+        {
+            DateTime diasAnteriores = DateTime.Now.Subtract(TimeSpan.FromDays(i));
+            var diarioGravado = await _ctx.Diarios.FirstOrDefaultAsync(d => d.usuarioID == idUsuarioRequest && d.data.Date == diasAnteriores.ToUniversalTime().Date);
+            if (diarioGravado == null)
+            {
+                var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
+                novoDiario.AdicionarRefeicao(new Refeicao());
+                _ctx.Diarios.Add(novoDiario);
+                diariosDaSemana.Add(novoDiario);
+            }
+            else
+            {
+                PreencherDiario(diarioGravado);
+                diariosDaSemana.Add(diarioGravado);
+            }            
+        }
+        await _ctx.SaveChangesAsync();
+        return Ok(diariosDaSemana);
     }
 }

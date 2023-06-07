@@ -8,7 +8,7 @@ public class AlimentoController : ControllerBase
 {
     private IAlimentoProvider _provider;
 
-    public AlimentoController(AlimentosJSON provider)
+    public AlimentoController(IAlimentoProvider provider)
     {
         _provider = provider;
     }

@@ -1,0 +1,35 @@
+﻿@using System.Globalization;
+@using diarioAlimentar.Client.Services;
+@using diarioAlimentar.Shared;
+@inject DiarioService _diarioService;
+
+@if (diarios.Any())
+{
+    <ApexChart TItem="Diario"
+               Title="Consumo Semanal">
+
+        <ApexPointSeries TItem="Diario"
+                         Items="diarios"
+                         SeriesType="SeriesType.Bar"
+                         Name="calorias"
+                         XValue='@(e => br.DateTimeFormat.GetDayName(e.data.DayOfWeek))'
+                         YAggregate="@(e => e.Sum(e => e.Refeicoes.Sum(r => (decimal)r.GerarRelatorio().Centesimal.energiaKcal)))" />
+    </ApexChart>
+}
+@code {
+    private List<Diario> diarios { get; set; } = new();
+
+    private CultureInfo br = new CultureInfo("pt-BR");
+
+    protected async override void OnInitialized()
+    {
+        var semanaRequest = await _diarioService.GetDiariosSemana();
+        if (semanaRequest != null)
+        {
+            diarios = semanaRequest.ToList();
+            StateHasChanged();
+        }
+    }
+
+
+}
