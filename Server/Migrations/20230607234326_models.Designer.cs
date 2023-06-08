@@ -12,8 +12,8 @@ using diarioAlimentar.Server.Data;
 namespace diarioAlimentar.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230530121807_modelosUpdate")]
-    partial class modelosUpdate
+    [Migration("20230607234326_models")]
+    partial class models
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

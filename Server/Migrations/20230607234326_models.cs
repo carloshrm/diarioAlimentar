@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace diarioAlimentar.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class modelos : Migration
+    public partial class models : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
