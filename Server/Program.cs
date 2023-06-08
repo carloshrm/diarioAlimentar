@@ -20,7 +20,6 @@ namespace diarioAlimentar
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
-
             builder.Services.AddSingleton<IAlimentoProvider, AlimentosJSON>();
             builder.Services.AddScoped<ApplicationUserClaimsPrincipalFactory>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
