@@ -18,7 +18,8 @@ namespace diarioAlimentar
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? builder.Configuration["ConnectionStrings:DefaultConnection"] ?? builder.Configuration["DefaultConnection"]  ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? builder.Configuration["ConnectionStrings:DefaultConnection"] ?? builder.Configuration["DefaultConnection"]  ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = "User Id=qwokwozj;Password=MeH6wid8w-kbCyxNw9jb3tEO4vEgpXMq;Server=silly.db.elephantsql.com;Port=5432;Database=qwokwozj;SslMode=prefer";
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
             builder.Services.AddSingleton<IAlimentoProvider, AlimentosJSON>();
             builder.Services.AddScoped<ApplicationUserClaimsPrincipalFactory>();
