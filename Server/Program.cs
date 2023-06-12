@@ -54,8 +54,8 @@ namespace diarioAlimentar
                 .AddIdentityServerJwt()
                 .AddGoogle(googleOptions =>
                 {
-                    googleOptions.ClientId = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientId"] ?? throw new InvalidOperationException("Google Provider client id not found");
-                    googleOptions.ClientSecret = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET:ClientSecret"] ?? throw new InvalidOperationException("Google Provider clientsecret not found");
+                    googleOptions.ClientId = builder.Configuration["GOOGLE_PROVIDER_ID"] ?? throw new InvalidOperationException("Google Provider client id not found");
+                    googleOptions.ClientSecret = builder.Configuration["GOOGLE_PROVIDER_AUTHENTICATION_SECRET"] ?? throw new InvalidOperationException("Google Provider clientsecret not found");
 
                 });
 

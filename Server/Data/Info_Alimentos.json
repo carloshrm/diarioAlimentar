@@ -20069,12 +20069,12 @@
     "informacao": {
       "Centesimal": {
         "umidade": 0,
-        "energiaKcal": 0,
-        "energiaKJ": 0,
-        "proteina": 0,
+        "energiaKcal": 0.4,
+        "energiaKJ": 17,
+        "proteina": 0.02,
         "lipideos": 0,
-        "colesterol": 4,
-        "carboidrato": 0,
+        "colesterol": 0.03,
+        "carboidrato": 0.05,
         "fibras": 0,
         "cinzas": 0.8
       },
@@ -20113,12 +20113,12 @@
     "informacao": {
       "Centesimal": {
         "umidade": 0,
-        "energiaKcal": 0,
-        "energiaKJ": 0,
-        "proteina": 0,
-        "lipideos": 0,
-        "colesterol": 10,
-        "carboidrato": 0,
+        "energiaKcal": 0.7,
+        "energiaKJ": 27,
+        "proteina": 0.02,
+        "lipideos": 0.03,
+        "colesterol": 4,
+        "carboidrato": 0.07,
         "fibras": 0,
         "cinzas": 0.8
       },
