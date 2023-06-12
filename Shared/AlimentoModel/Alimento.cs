@@ -26,4 +26,9 @@ public class Alimento
         this.categoria = categoria;
     }
 
+    public override string ToString()
+    {
+        return nome;
+    }
+
 }

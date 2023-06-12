@@ -43,11 +43,6 @@ button {
     margin: 0 0.4em;
 }
 
-.ref-ativa {
-    box-shadow: 2px 2px 8px 1px gray;
-    padding: 2em;
-    border: 2px solid white;
-}
 
 .btn-diario,
 .btn-diario-alt,
@@ -75,6 +70,7 @@ button {
 
 .btn-diario-ct-alt {
     background-color: var(--light-fg);
+    font-weight: bold;
     color: white;
 }
 
@@ -82,9 +78,17 @@ button {
     background-color: var(--light-fg);
 }
 
+@media only screen and (max-width: 850px) {
+    .container-transp {
+        box-shadow: none;
+        backdrop-filter: blur(6px) brightness(1.08);
+        border: 1px solid white;
+    }
+}
+
 .container-transp {
     box-shadow: 2px 2px 10px 1px gray;
-    backdrop-filter: blur(6px) brightness(108%);
+    backdrop-filter: blur(6px) brightness(1.08);
     border: 2px solid white;
 }
 

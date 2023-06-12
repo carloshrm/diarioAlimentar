@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Numerics;
+using System.Text;
 
 namespace diarioAlimentar.Shared;
 
@@ -8,7 +9,7 @@ public class Refeicao
     [Key]
     public Guid refeicaoID { get; set; } = Guid.NewGuid();
 
-    public ICollection<Porcao> Porcoes { get; set; } = new List<Porcao>();
+    public ICollection<Porcao> porcoes { get; set; } = new List<Porcao>();
     public Periodo periodo { get; set; }
     public TimeOnly horario { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
@@ -22,14 +23,14 @@ public class Refeicao
     public void AdicionarPorcao(Porcao porcao)
     {
         porcao.refeicaoID = refeicaoID;
-        Porcoes.Add(porcao);
+        porcoes.Add(porcao);
     }
 
     public InfoNutricional GerarRelatorio()
     {
         var resultado = new InfoNutricional();
-        foreach (var alm in Porcoes)
-            resultado += alm.Alimento.informacao * alm.quantidade;
+        foreach (var alm in porcoes)
+            resultado += alm.alimento.informacao * alm.quantidade;
         return resultado;
     }
 
@@ -39,5 +40,13 @@ public class Refeicao
             return false;
         else
             return refeicaoID == ((Refeicao)obj).refeicaoID;
+    }
+
+    public override string ToString()
+    {
+        if (porcoes.Any())
+            return $"\n {periodo}, {horario.ToShortTimeString()} :" + string.Join("", porcoes);
+        else
+            return "";
     }
 }

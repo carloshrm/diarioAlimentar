@@ -28,13 +28,13 @@ namespace diarioAlimentar.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Diario>()
-                .HasMany(r => r.Refeicoes)
+                .HasMany(r => r.refeicoes)
                 .WithOne()
                 .HasForeignKey(r => r.diarioID)
                 .IsRequired();
 
             builder.Entity<Refeicao>()
-                .HasMany(p => p.Porcoes)
+                .HasMany(p => p.porcoes)
                 .WithOne()
                 .HasForeignKey(p => p.refeicaoID)
                 .IsRequired()

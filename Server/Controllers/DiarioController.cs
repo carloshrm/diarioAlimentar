@@ -54,7 +54,7 @@ public class DiarioController : ControllerBase
                 _ctx.Porcoes
                     .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
                     .ToList()
-                    .ForEach(p => p.Alimento = _provider.GetAlimentoPorID(p.alimentoID));
+                    .ForEach(p => p.alimento = _provider.GetAlimentoPorID(p.alimentoID));
 
             return Ok(diarioHoje);
         }
@@ -64,19 +64,19 @@ public class DiarioController : ControllerBase
     public async Task<ActionResult<Diario>> SetDiario(Diario diario)
     {
         var diarioAnterior = _ctx.Diarios.FirstOrDefault(d => d == diario);
-        foreach (var r in diario.Refeicoes)
+        foreach (var r in diario.refeicoes)
         {
             var refeicaoAnterior = _ctx.Refeicoes.FirstOrDefault(refe => refe.refeicaoID == r.refeicaoID);
             if (refeicaoAnterior == null)
             {
                 _ctx.Refeicoes.Add(r);
-                foreach (var p in r.Porcoes)
+                foreach (var p in r.porcoes)
                     _ctx.Porcoes.Add(p);
             }
             else
             {
                 _ctx.Entry(refeicaoAnterior).CurrentValues.SetValues(r);
-                foreach (var p in r.Porcoes)
+                foreach (var p in r.porcoes)
                 {
                     var porcaoAnterior = _ctx.Porcoes.FirstOrDefault(po => po.porcaoID == p.porcaoID);
                     if (porcaoAnterior == null)
@@ -130,7 +130,7 @@ public class DiarioController : ControllerBase
             _ctx.Porcoes
                 .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
                 .ToList()
-                .ForEach(p => p.Alimento = _provider.GetAlimentoPorID(p.alimentoID));
+                .ForEach(p => p.alimento = _provider.GetAlimentoPorID(p.alimentoID));
         }
     }
 

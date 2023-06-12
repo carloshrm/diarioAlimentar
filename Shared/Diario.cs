@@ -10,7 +10,7 @@ public class Diario
     public DateTime data { get; set; } = DateTime.Now.ToUniversalTime();
     public string usuarioID { get; set; }
 
-    public ICollection<Refeicao> Refeicoes { get; set; } = new List<Refeicao>();
+    public ICollection<Refeicao> refeicoes { get; set; } = new List<Refeicao>();
 
     public Diario()
     {
@@ -20,7 +20,7 @@ public class Diario
     public void AdicionarRefeicao(Refeicao refeicao)
     {
         refeicao.diarioID = diarioID;
-        Refeicoes.Add(refeicao);
+        refeicoes.Add(refeicao);
     }
 
     public override bool Equals(object? obj)
@@ -29,5 +29,10 @@ public class Diario
             return false;
         else
             return (diarioID == ((Diario)obj).diarioID) && (usuarioID == ((Diario)obj).usuarioID);
+    }
+
+    public override string ToString()
+    {
+        return $"Diário de {data.ToShortDateString()}:" + string.Join("", refeicoes);
     }
 }

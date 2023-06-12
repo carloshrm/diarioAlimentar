@@ -9,7 +9,7 @@ public class Porcao
     public Guid porcaoID { get; set; } = Guid.NewGuid();
 
     [NotMapped]
-    public Alimento Alimento { get; set; } 
+    public Alimento alimento { get; set; } 
     public int alimentoID { get; set; }
     public double quantidade { get; set; }
 
@@ -18,6 +18,11 @@ public class Porcao
     public Porcao()
     {
             
+    }
+
+    public override string ToString()
+    {
+        return $"\n\t Nome: {alimento.nome}  \t Quantidade: {quantidade} g/ml";
     }
 
 }

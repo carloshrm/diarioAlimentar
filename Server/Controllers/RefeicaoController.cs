@@ -26,7 +26,7 @@ namespace diarioAlimentar.Server.Controllers
             else
             {
                 _ctx.Refeicoes.Add(rf);
-                foreach (var p in rf.Porcoes)
+                foreach (var p in rf.porcoes)
                     _ctx.Porcoes.Add(p);
             }
             await _ctx.SaveChangesAsync();
