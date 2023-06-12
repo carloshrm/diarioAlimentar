@@ -1,7 +1,8 @@
 ﻿@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
-@inject AlimentoService _alimentoService
-@inject PorcaoService _porcaoService
+@inject AlimentoService _alimentoService;
+@inject PorcaoService _porcaoService;
+@implements IDisposable;
 
 <div id="alimento-form-cont">
     <button class="btn-diario m-2" @onclick=@(() => mostrarBusca = !mostrarBusca)>Adicionar Alimento</button>
@@ -9,45 +10,47 @@
     {
         <div class="mx-4">
             <span class="oi oi-magnifying-glass"></span>
-            <input id="busca" @bind=@buscaDigitada @bind:event="oninput" @onkeyup="BuscaDigitadaHandler" />
-            <button class="btn-diario-alt" @onclick="BuscarAlimento">Procurar</button>
+            <input class="form-input" id="busca" @bind=@buscaDigitada @bind:event="oninput" @onkeyup="BuscaDigitadaHandler" />
+            <button class="btn btn-diario-alt" @onclick="BuscarAlimento">Procurar</button>
         </div>
         @if (encontrados.Any())
         {
-        <div id="busca-alimento-resultados">
-            @foreach (var cat in encontrados.GroupBy(a => a.categoria))
-            {
-                <div>
-                    <h4>@cat.Key.GetNomeCategoria()</h4>
-                    @foreach (var al in cat)
-                    {
-                        <div class="busca-alimento-unidade">
-                            <button class="btn btn-diario-alt oi oi-plus" @onclick=@(() => { 
-                                if (expandirDetalhes == al.AlimentoID) 
-                                    expandirDetalhes = -1;
-                                else 
-                                    expandirDetalhes = al.AlimentoID; 
-                            })></button>
-                            <p>@al.nome</p>
-                        </div>
-                        @if (expandirDetalhes == al.AlimentoID)
+            <div id="busca-alimento-resultados">
+                @foreach (var cat in encontrados.GroupBy(a => a.categoria))
+                {
+                    <div>
+                        <h4>@cat.Key.GetNomeCategoria()</h4>
+                        @foreach (var al in cat)
                         {
-                            <div class="add-alimento_conf">
-                                <span>Quantidade: </span>
-                                <InputNumber @bind-Value=quantidade />
-                                <select @bind=@medida>
-                                    <option selected value=@(10)>1 Colher (10g)</option>
-                                    <option value=@(30.0)>1 Fatia (30g)</option>
-                                    <option value=@(200.0)>1 Copo (200ml)</option>
-                                    <option value=@(1)>g/ml</option>
-                                </select>
-                                <button class="btn-diario-alt" @onclick=@(() => AdicionarAlimento(al))>Adicionar</button>
+                            <div class="busca-alimento-unidade">
+                                <button 
+                                    class="btn btn-diario-alt oi @(expandirDetalhes == al.AlimentoID ? "oi-menu" : "oi-plus")"
+                                    @onclick=@(() => expandirDetalhes = expandirDetalhes == al.AlimentoID ? -1 : al.AlimentoID )>
+                                </button>
+                                <p>@al.nome</p>
                             </div>
+                            @if (expandirDetalhes == al.AlimentoID)
+                            {
+                                <div class="mx-4 add-alimento_conf">
+                                    <span>Quantidade: </span>
+                                    <InputNumber @bind-Value=quantidade />
+                                    <select @bind=@medida class="">
+                                        <option selected value=@(25.0)>Unidade peqquena (25g)</option>
+                                        <option selected value=@(50.0)>Unidade grande (50g)</option>
+                                        <option value=@(16.0)>Fatia (16g)</option>
+                                        <option value=@(180.0)>Copo americano (180ml)</option>
+                                        <option value=@(250.0)>Xícara de chá (250ml)</option>
+                                        <option value=@(15)>Colher de sopa (15ml)</option>
+                                        <option value=@(5)>Colher de chá (5ml)</option>
+                                        <option value=@(1)>g/ml</option>
+                                    </select>
+                                    <button class="btn-diario-alt" @onclick=@(() => AdicionarAlimento(al))>Adicionar</button>
+                                </div>
+                            }
                         }
-                    }
-                </div>
-            }
-        </div>
+                    </div>
+                }
+            </div>
         }
     }
 </div>
@@ -77,7 +80,7 @@
 
     private async void AdicionarAlimento(Alimento al)
     {
-        var novaPorcao = (new Porcao() { Alimento = al, quantidade = (medida * quantidade) / 100, alimentoID = al.AlimentoID });
+        var novaPorcao = (new Porcao() { alimento = al, quantidade = (medida * quantidade) / 100, alimentoID = al.AlimentoID });
         refeicao.AdicionarPorcao(novaPorcao);
         await _porcaoService.SetPorcao(novaPorcao);
         mostrarBusca = !mostrarBusca;
@@ -101,7 +104,7 @@
     private async Task BuscarAlimento()
     {
         Console.WriteLine("busca");
-        if (buscaDigitada.Length == 0) 
+        if (buscaDigitada.Length == 0)
             return;
         var al = await _alimentoService.GetPorNome(buscaDigitada);
         if (al != null && al.Any())
@@ -110,4 +113,10 @@
             StateHasChanged();
         }
     }
+
+    public void Dispose()
+    {
+        debounceBusca.Dispose();
+    }
+
 }

@@ -1,10 +1,25 @@
 ﻿#refeicoes-container {
-    padding: 2em;
+    padding: 1em;
     backdrop-filter: brightness(0.9);
+    margin: 1em 0;
 }
 
 @media only screen and (max-width: 800px) {
     #refeicoes-container {
         padding: 0.2em;
     }
+}
+
+.ativa {
+    font-weight: bold;
+    box-shadow: 0 0 8px 10px var(--light-m-t);
+}
+
+.ref {
+    backdrop-filter: brightness(1.1);
+}
+
+.periodo {
+    backdrop-filter: brightness(1.1);
+    border-bottom: 2px solid var(--light-bg);
 }

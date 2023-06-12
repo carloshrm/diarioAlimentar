@@ -13,7 +13,7 @@
                          SeriesType="SeriesType.Bar"
                          Name="calorias"
                          XValue='@(e => br.DateTimeFormat.GetDayName(e.data.DayOfWeek))'
-                         YAggregate="@(e => e.Sum(e => e.Refeicoes.Sum(r => (decimal)r.GerarRelatorio().Centesimal.energiaKcal)))" />
+                         YAggregate="@(e => e.Sum(e => e.refeicoes.Sum(r => (decimal)r.GerarRelatorio().Centesimal.energiaKcal)))" />
     </ApexChart>
 }
 @code {

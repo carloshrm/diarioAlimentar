@@ -4,9 +4,9 @@
 
 <div class="porcao-view">
     <div class=@("porcao-container" + (ativa ? " porcao-at" : ""))>
-        <p class="alimento-nome">@porcao.Alimento.nome</p>
+        <p class="alimento-nome">@porcao.alimento.nome</p>
         <p>Quantidade: @(porcao.quantidade * 100) g/ml</p>
-        <p>Energia: @(Math.Round(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</p>
+        <p>Energia: @(Math.Round(porcao.alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</p>
         @if (ativa)
         {
             <div class="alimento-btn">
@@ -32,30 +32,30 @@
                 <tbody>
                     <tr>
                         <td scope="row">Energia</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.energiaKcal * porcao.quantidade) kcal</td>
+                        <td scope="row">@(porcao.alimento.informacao.Centesimal.energiaKcal * porcao.quantidade) kcal</td>
                     </tr>
                     <tr>
                         <td scope="row">Carboidratos</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.carboidrato * porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.alimento.informacao.Centesimal.carboidrato * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="row">Gorduras</td>
                     </tr
                     <tr>
                         <td scope="col" class="px-5">Saturadas</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.sat * porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.alimento.informacao.Gorduras.sat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Monoinsaturadas</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.monoinsat * porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.alimento.informacao.Gorduras.monoinsat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Poliinsaturadas</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Gorduras.poliinsat * porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.alimento.informacao.Gorduras.poliinsat * porcao.quantidade)g</td>
                     </tr>
                     <tr>
                         <td scope="row">Fibras</td>
-                        <td scope="row">@(porcao.Alimento.informacao.Centesimal.fibras * porcao.quantidade)g</td>
+                        <td scope="row">@(porcao.alimento.informacao.Centesimal.fibras * porcao.quantidade)g</td>
                     </tr>
                 </tbody>
             </table>
@@ -80,8 +80,8 @@
         parameters.SetParameterProperties(this);
         if (parameters.TryGetValue<Porcao>(nameof(porcao), out var value))
         {
-            if (value.Alimento == null)
-                value.Alimento = await alimentoService.GetPorID(value.alimentoID);
+            if (value.alimento == null)
+                value.alimento = await alimentoService.GetPorID(value.alimentoID);
             porcao = value;
         }
         await base.SetParametersAsync(ParameterView.Empty);

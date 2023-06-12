@@ -1,8 +1,7 @@
 ﻿@using diarioAlimentar.Shared;
 
 <div id="relatorio_cont">
-
-    <h2>Resumo de Energia</h2>
+    <h4>Energia</h4>
     <table class="table table-sm">
         <thead>
             <tr>
@@ -13,61 +12,71 @@
         </thead>
         <tbody>
             <tr>
-                <td>@(relatorio.Centesimal.energiaKcal) kcal</td>
+                <td>@Math.Round(relatorio.Centesimal.energiaKcal, 2) kcal</td>
                 <td>@bmr kcal</td>
-                <td>@(Math.Round(relatorio.Centesimal.energiaKcal - bmr, 2)) kcal</td>
+                <td>@Math.Round(relatorio.Centesimal.energiaKcal - bmr, 2) kcal</td>
             </tr>
         </tbody>
 
     </table>
-    <h4>Resumo de Macronutrientes</h4>
-    <div class="d-flex">
-        <div class="w-50">
-            <ApexChart TItem="InfoGrafico"
-                       Title="Resumo Macro" @ref=gr >
+    @if (relatorio.Centesimal.energiaKcal > 200)
+    {
+        <h4>Macronutrientes</h4>
+        <div class="d-flex">
+            <div class="table-responsive w-50">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Consumido</th>
+                            <th scope="col">Alvo</th>
+                            <th scope="col">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row">Carboidratos</td>
+                            <td>@Math.Round(relatorio.Centesimal.carboidrato, 2) g</td>
+                            <td>@Math.Round((bmr * 0.5) / 4) g</td>
+                            <td>@(Math.Round((relatorio.Centesimal.carboidrato / Math.Round((bmr * 0.5) / 4)) * 100, 2))</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Proteinas</td>
+                            <td>@Math.Round(relatorio.Centesimal.proteina, 2) g</td>
+                            <td>@(Math.Round((bmr * 0.3) / 4))g</td>
+                            <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.3) / 4)) * 100, 2))</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Gorduras</td>
+                            <td>@Math.Round(relatorio.Gorduras.GetGordurasTotais(), 2) g</td>
+                            <td>@(Math.Round((bmr * 0.2) / 4))g</td>
+                            <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.2) / 9)) * 100, 2))</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex-grow-1">
+                <ApexChart TItem="AgregaMacro"
+                           Title="Resumo Macro" @ref=graficoMacro>
 
-                <ApexPointSeries TItem="InfoGrafico"
-                                 Items="info"
-                                 SeriesType="SeriesType.Donut"
-                                 Name="Quantidade g/ml"
-                                 XValue="@(e => e.nome)"
-                                 YAggregate="@(e => e.Sum(i => (decimal) i.val))"
-                                 OrderByDescending="e=>e.Y" />
-            </ApexChart>
+                    <ApexPointSeries TItem="AgregaMacro"
+                                     Items="info"
+                                     SeriesType="SeriesType.Pie"
+                                     Name="Quantidade g/ml"
+                                     XValue="@(e => e.def)"
+                                     YAggregate="@(e => e.Sum(i => (decimal) i.val))"
+                                     OrderByDescending="e=>e.Y" />
+                </ApexChart>
+            </div>
         </div>
-        <div class="table-responsive w-50">
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th scope="col">Tipo</th>
-                        <th scope="col">Consumido</th>
-                        <th scope="col">Alvo</th>
-                        <th scope="col">%</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td scope="row">Carboidratos</td>
-                        <td>@Math.Round(relatorio.Centesimal.carboidrato, 2) g</td>
-                        <td>@(Math.Round((bmr * 0.5) / 4))g</td>
-                        <td>@(Math.Round((relatorio.Centesimal.carboidrato / Math.Round((bmr * 0.5) / 4)) * 100, 2))</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">Proteinas</td>
-                        <td>@Math.Round(relatorio.Centesimal.proteina, 2) g</td>
-                        <td>@(Math.Round((bmr * 0.3) / 4))g</td>
-                        <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.3) / 4)) * 100, 2))</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">Gorduras</td>
-                        <td>@Math.Round(relatorio.Gorduras.GetGordurasTotais(), 2) g</td>
-                        <td>@(Math.Round((bmr * 0.2) / 4))g</td>
-                        <td>@(Math.Round((relatorio.Centesimal.proteina / Math.Round((bmr * 0.2) / 9)) * 100, 2))</td>
-                    </tr>
-                </tbody>
-            </table>
+    }
+    <button class="btn-diario m-2 btn-sm" @onclick=@(() => resumoSemanal = !resumoSemanal)>Ver Resumo Semanal</button>
+    @if (resumoSemanal)
+    {
+        <div class="m-2 w-50">
+            <GraficoSemanal />
         </div>
-    </div>
+    }
 </div>
 
 @code {
@@ -77,25 +86,25 @@
     [Parameter]
     public double bmr { get; set; }
 
-    private List<InfoGrafico> info;
-    private ApexChart<InfoGrafico> gr;
+    private List<AgregaMacro> info;
+    private ApexChart<AgregaMacro> graficoMacro;
+    private bool resumoSemanal = false;
 
     protected override void OnParametersSet()
     {
         info = new();
-        info.Add(new InfoGrafico() { nome = "Gorduras Saturadas", val = relatorio.Gorduras.sat });
-        info.Add(new InfoGrafico() { nome = "Gorduras Insaturadas", val = relatorio.Gorduras.poliinsat + relatorio.Gorduras.monoinsat });
-        info.Add(new InfoGrafico() { nome = "Carboidratos", val = relatorio.Centesimal.carboidrato });
-        info.Add(new InfoGrafico() { nome = "Proteinas", val = relatorio.Centesimal.proteina });
-        info.Add(new InfoGrafico() { nome = "Fibras", val = relatorio.Centesimal.fibras });
-        if (gr != null)
-            gr.RenderAsync();
+        info.Add(new AgregaMacro() { def = "Gorduras Saturadas", val = relatorio.Gorduras.sat });
+        info.Add(new AgregaMacro() { def = "Gorduras Insaturadas", val = relatorio.Gorduras.poliinsat + relatorio.Gorduras.monoinsat });
+        info.Add(new AgregaMacro() { def = "Carboidratos", val = relatorio.Centesimal.carboidrato });
+        info.Add(new AgregaMacro() { def = "Proteinas", val = relatorio.Centesimal.proteina });
+        info.Add(new AgregaMacro() { def = "Fibras", val = relatorio.Centesimal.fibras });
+        if (graficoMacro != null)
+            graficoMacro.RenderAsync();
     }
 
-    internal class InfoGrafico
+    internal class AgregaMacro
     {
-        public string nome { get; set; }
-        public double val { get; set; }
-
+        public string def { get; set; } = "";
+        public double val { get; set; } = 0;
     }
 }

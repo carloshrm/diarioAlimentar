@@ -6,42 +6,43 @@
 @foreach (var refPeriodo in listaLocal)
 {
     <div id="refeicoes-container">
-        <h3><div class="oi oi-book mx-2"></div>@refPeriodo.Key.GetEnumDisplay()</h3>
+        <div class="periodo">
+            <span class="oi oi-book mx-2"></span>
+            <span class="h4">@refPeriodo.Key.GetEnumDisplay()</span>
+        </div>
         <div>
             @foreach (var refGravada in refPeriodo)
             {
                 @if (refeicaoAtiva == null) refeicaoAtiva = refGravada;
 
-                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-2 @(refeicaoAtiva == refGravada ? "ref-ativa" : "")">
+                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-1 ref @(refeicaoAtiva == refGravada ? "ativa my-4" : "my-2")">
                     <div>
                         <div class="d-flex justify-content-between">
-                            <p>Horário: @refGravada.horario.ToShortTimeString()</p>
+                            <p class="m-0 flex-grow-1">Refeição adicionada às: @refGravada.horario.ToShortTimeString()</p>
                             <button class="btn btn-diario-ct-alt oi oi-trash" @onclick=@(() => confirmarRemocao = !confirmarRemocao)></button>
+                            @if (confirmarRemocao && refeicaoAtiva == refGravada)
+                            {
+                                <div class="bg-dark text-white rounded px-1">
+                                    <span>Remover esta refeição vai apagar todos os alimentos registrados, tem certeza?</span>
+                                    <button class="btn btn-danger btn-sm" @onclick=@(async () => await RemoverRefeicao(refGravada))>
+                                        Sim
+                                    </button>
+                                    <button class="btn-diario-ct-alt btn-sm" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>Não</button>
+                                </div>
+                            }
                         </div>
-                        @if (confirmarRemocao)
-                        {
-                            <div>
-                                <p>Tem certeza que deseja remover essa refeição e todos os alimentos registrados?</p>
-                                <button class="btn-diario-ct-alt" @onclick=@(async () => 
-                                    {
-                                        await _refeicaoService.RemoveRefeicao(refGravada);
-                                        StateHasChanged();
-                                    })>Sim</button>
-                                <button class="btn-diario-ct-alt" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>Não</button>
-                            </div>
-                        }
-                        <h4>Alimentos: </h4>
-                        @foreach (var p in refGravada.Porcoes)
+                        <p class="oi @(refeicaoAtiva == refGravada ? "oi-menu" : "oi-plus") mx-2"></p>
+                        <span class="h4">Alimentos </span>
+
+                        @foreach (var p in refGravada.porcoes)
                         {
                             <PorcaoView porcao=p ativa=@(refeicaoAtiva == refGravada) callbackDelete=@(async (p) => await RemoverPorcao(p)) />
                         }
                     </div>
                     @if (refeicaoAtiva == refGravada)
                     {
-                        <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar/>
+                        <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar />
                     }
-
-
                 </div>
             }
         </div>
@@ -71,7 +72,19 @@
         var resultado = await _porcaoService.RemovePorcao(p);
         if (resultado)
         {
-            refeicoes.First(r => r.refeicaoID == p.refeicaoID).Porcoes.Remove(p);
+            refeicoes.First(r => r.refeicaoID == p.refeicaoID).porcoes.Remove(p);
+            callbackAtualizar();
+        }
+    }
+
+    public async Task RemoverRefeicao(Refeicao r)
+    {
+
+        var resultado = await _refeicaoService.RemoveRefeicao(r);
+        if (resultado)
+        {
+            refeicoes.Remove(r);
+            refeicaoAtiva = null;
             callbackAtualizar();
         }
     }

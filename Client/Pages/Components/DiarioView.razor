@@ -6,34 +6,34 @@
 
 @implements IDisposable;
 @inject DiarioService _diarioService;
+@inject IJSRuntime _js;
 
-<div class="container-md" id="diario-container">
+<div class="container-xl" id="diario-container">
     @if (diarioAtual != null)
     {
-        <div class="container-transp" id="diario-titulo">
-            <h1>Diário Alimentar</h1>
-            <button class="btn-diario" @onclick=@(() => TrocarDiario())>Dia anterior</button>
-            <h5>Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
-            @if (diarioAtual.data.Date != DateTime.Now.Date)
-            {
-                <button class="btn-diario" @onclick=@(() => TrocarDiario(voltar: false))>Dia Posterior</button>
-            }
+        <div class="bg-white m-2 d-flex" id="diario-titulo">
+
+            <h2 class="m-2">Diário Alimentar</h2>
+            <div class="ms-auto d-flex align-items-center p-2 border border-2 border-white">
+                <button class="btn-diario btn-sm" @onclick=@(() => TrocarDiario())>Dia anterior</button>
+                <h5 class="m-2 fw-bold">Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
+                @if (diarioAtual.data.Date != DateTime.Now.Date)
+                {
+                    <button class="btn btn-diario btn-sm" @onclick=@(() => TrocarDiario(voltar: false))>Dia Posterior</button>
+                }
+            </div>
         </div>
         <div class="container-transp">
             <RelatorioMacro bmr=@bmr relatorio=@relatorio />
-            <button class="btn-diario m-2" @onclick=@(() => resumoSemanal = !resumoSemanal)>Ver Resumo Semanal</button>
-            @if (resumoSemanal)
-            {
-                <div class="m-2 w-50">
-                    <Grafico />
-                </div>
-            }
         </div>
 
         <div class="container-transp p-2 my-4">
-            <h2>Refeições</h2>
-            <RefeicoesView refeicoes=@diarioAtual.Refeicoes callbackAtualizar=@atualizarRelatorio />
-            <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarRelatorio />
+            <div class="d-flex justify-content-between">
+                <h2>Refeições</h2>
+                <button class="btn-sm btn-diario-alt m-2" @onclick=@(() => BaixarRelatorio())>Salvar</button>
+            </div>
+            <RefeicoesView refeicoes=@diarioAtual.refeicoes callbackAtualizar=@atualizarDiario />
+            <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarDiario />
         </div>
     }
     else
@@ -49,18 +49,15 @@
     private Diario diarioAtual { get; set; }
 
     private InfoNutricional relatorio { get; set; }
-    private Action atualizarRelatorio { get; set; }
+    private Action atualizarDiario { get; set; }
 
     private double bmr { get; set; } = 2000;
-    private bool resumoSemanal = false;
 
     public DiarioView()
     {
         relatorio = new InfoNutricional();
-        atualizarRelatorio = () =>
-        {
-            CalcularRelatorioGeral();
-            StateHasChanged();
+        atualizarDiario = () => {
+            CalcularRelatorioGeral(); 
         };
     }
 
@@ -70,7 +67,6 @@
         if (authState != null && authState.User.Identity.IsAuthenticated)
         {
             diarioAtual = await _diarioService.GetDiarioHoje();
-            Console.WriteLine(diarioAtual);
             CalcularRelatorioGeral();
             bmr = await CalcularBMR();
         }
@@ -83,10 +79,9 @@
             data = diarioAtual.data.Subtract(TimeSpan.FromDays(1));
         else
             data = diarioAtual.data.AddDays(1);
-        Console.WriteLine(data);
+
         diarioAtual = await _diarioService.GetDiarioPorData(data);
         CalcularRelatorioGeral();
-        StateHasChanged();
     }
 
     private Periodo GetPeriodoAtual()
@@ -119,7 +114,13 @@
 
     private void CalcularRelatorioGeral()
     {
-        relatorio = diarioAtual.Refeicoes.Select(a => a.GerarRelatorio()).Aggregate((a, b) => a + b);
+        relatorio = diarioAtual.refeicoes.Select(a => a.GerarRelatorio()).Aggregate((a, b) => a + b);
+        StateHasChanged();
+    }
+
+    private async Task BaixarRelatorio()
+    {
+        await _js.InvokeVoidAsync("Download", diarioAtual.ToString(), "Relatorio Alimentar de " + diarioAtual.data.ToShortDateString());
     }
 
     private async Task SalvarDiario()
@@ -131,5 +132,4 @@
     {
         await SalvarDiario();
     }
-
 }
