@@ -71,7 +71,7 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Email inválido.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -80,18 +80,18 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(20, ErrorMessage = "A {0} deve ter pelomenos {2} e no máximo {1} caracteres.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; }
+            [Display(Name = "Senha")]
+            public string Senha { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Confirmação da Senha")]
+            [Compare("Senha", ErrorMessage = "A confirmação não combinou com a senha.")]
             public string ConfirmPassword { get; set; }
 
             [Required]
@@ -100,11 +100,13 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             public DateTime dataNascimento { get; set; }
 
             [Required]
+            [Range(50, 250, ErrorMessage = "O peso deve ser um número entre 50kg e 250kg.")]
             [Display(Name = "Peso")]
             public double peso { get; set; }
 
             [Required]
             [DataType(DataType.Text)]
+            [Range(120, 220.0, ErrorMessage = "A altura deve ser um número entre 120cm e 220cm")]
             [Display(Name = "Altura")]
             public double altura { get; set; }
 
@@ -143,7 +145,7 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, Input.Senha);
 
                 if (result.Succeeded)
                 {

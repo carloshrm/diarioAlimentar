@@ -83,6 +83,33 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+
+            [Required]
+            [Display(Name = "Data de Nascimento")]
+            [DataType(DataType.Date)]
+            public DateTime dataNascimento { get; set; }
+
+            [Required]
+            [Range(50, 250, ErrorMessage = "O peso deve ser um número entre 50kg e 250kg.")]
+            [Display(Name = "Peso")]
+            public double peso { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Range(120, 220.0, ErrorMessage = "A altura deve ser um número entre 120cm e 220cm")]
+            [Display(Name = "Altura")]
+            public double altura { get; set; }
+
+            [Required]
+            [DataType("NivelAtividade")]
+            [Display(Name = "Nível de Atividade")]
+            public NivelAtividade nivelAtividade { get; set; }
+
+            [Required]
+            [DataType("Sexo")]
+            [Display(Name = "Sexo")]
+            public Sexo sexo { get; set; }
         }
 
         public IActionResult OnGet()
@@ -154,6 +181,12 @@ namespace diarioAlimentar.Server.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+
+                user.dataNascimento = Input.dataNascimento.ToUniversalTime();
+                user.peso = Input.peso;
+                user.altura = Input.altura;
+                user.nivelAtividade = Input.nivelAtividade;
+                user.sexo = Input.sexo;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

@@ -6,24 +6,24 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="row">
+<div class="row container-transp p-4">
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Criar uma nova conta.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nome@example.com" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Senha</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <input asp-for="Input.Senha" class="form-control" autocomplete="new-password" aria-required="true" placeholder="senha" />
+                <label asp-for="Input.Senha">Senha</label>
+                <span asp-validation-for="Input.Senha" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="senha" />
                 <label asp-for="Input.ConfirmPassword">Confirmar Senha</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
@@ -31,14 +31,20 @@
             <div class="form-group mb-3">
                 <label asp-for="Input.dataNascimento" class="form-label">Data de Nascimento</label>
                 <input asp-for="Input.dataNascimento" class="form-label" />
+                <span asp-validation-for="Input.dataNascimento" class="text-danger"></span>
+
             </div>
             <div class="form-group mb-3">
                 <label asp-for="Input.peso" class="form-label">Peso (em kg)</label>
                 <input asp-for="Input.peso" class="form-control" />
+                <span asp-validation-for="Input.peso" class="text-danger"></span>
+
             </div>
             <div class="form-group mb-3">
                 <label asp-for="Input.altura" class="form-label">Altura (total em cm)</label>
                 <input asp-for="Input.altura" class="form-control" />
+                <span asp-validation-for="Input.altura" class="text-danger"></span>
+
             </div>
             <div class="form-group mb-3">
                 <label asp-for="Input.nivelAtividade" class="form-label"></label>
@@ -61,8 +67,6 @@
                 {
                     <div>
                         <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
                         </p>
                     </div>
                 }
@@ -73,7 +77,14 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    if (provider.DisplayName.Contains("Google"))
+                                    {
+                                        <button type="submit" class="login-with-google-btn" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    }
                                 }
                             </p>
                         </div>
