@@ -2,7 +2,6 @@
     backdrop-filter: brightness(0.9);
 }
 
-#relatorio_cont {
+#relatorio-cont {
     padding: 1em;
-    background-color: #FFFFFF50;
 }

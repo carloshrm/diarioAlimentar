@@ -23,9 +23,7 @@
                 }
             </div>
         </div>
-        <div class="container-transp">
-            <RelatorioMacro bmr=@bmr relatorio=@relatorio />
-        </div>
+        <RelatorioMacro bmr=@bmr relatorio=@relatorio />
 
         <div class="container-transp p-2 my-4">
             <div class="d-flex justify-content-between">
@@ -56,8 +54,9 @@
     public DiarioView()
     {
         relatorio = new InfoNutricional();
-        atualizarDiario = () => {
-            CalcularRelatorioGeral(); 
+        atualizarDiario = () =>
+        {
+            CalcularRelatorioGeral();
         };
     }
 
