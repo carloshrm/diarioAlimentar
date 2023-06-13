@@ -1,5 +1,6 @@
 ﻿# diarioAlimentar
 
+# https://diario-alm.azurewebsites.net/
 
 Um aplicativo web para auxiliar usuários a manter um díário alimentar com um banco de dados de informações nutricionais sobre alimentos.
 
