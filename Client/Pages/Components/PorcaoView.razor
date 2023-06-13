@@ -32,30 +32,30 @@
                 <tbody>
                     <tr>
                         <td scope="row">Energia</td>
-                        <td scope="row">@(porcao.alimento.informacao.Centesimal.energiaKcal * porcao.quantidade) kcal</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Centesimal.energiaKcal * porcao.quantidade, 2)) kcal</td>
                     </tr>
                     <tr>
                         <td scope="row">Carboidratos</td>
-                        <td scope="row">@(porcao.alimento.informacao.Centesimal.carboidrato * porcao.quantidade)g</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Centesimal.carboidrato * porcao.quantidade, 2))g</td>
                     </tr>
                     <tr>
                         <td scope="row">Gorduras</td>
                     </tr
                     <tr>
                         <td scope="col" class="px-5">Saturadas</td>
-                        <td scope="row">@(porcao.alimento.informacao.Gorduras.sat * porcao.quantidade)g</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Gorduras.sat * porcao.quantidade, 2))g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Monoinsaturadas</td>
-                        <td scope="row">@(porcao.alimento.informacao.Gorduras.monoinsat * porcao.quantidade)g</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Gorduras.monoinsat * porcao.quantidade, 2))g</td>
                     </tr>
                     <tr>
                         <td scope="col" class="px-5">Poliinsaturadas</td>
-                        <td scope="row">@(porcao.alimento.informacao.Gorduras.poliinsat * porcao.quantidade)g</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Gorduras.poliinsat * porcao.quantidade, 2))g</td>
                     </tr>
                     <tr>
                         <td scope="row">Fibras</td>
-                        <td scope="row">@(porcao.alimento.informacao.Centesimal.fibras * porcao.quantidade)g</td>
+                        <td scope="row">@(Math.Round(porcao.alimento.informacao.Centesimal.fibras * porcao.quantidade, 2))g</td>
                     </tr>
                 </tbody>
             </table>

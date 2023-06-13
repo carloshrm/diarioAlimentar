@@ -131,7 +131,7 @@
     {
         string arquivo = "Diario " + diarioAtual.data.ToString("dd_MM_YYYY") + ".pdf";
         var dados = PdfHelper.GerarPdf(arquivo, "Diario Alimentar de " + diarioAtual.data.ToShortDateString(), diarioAtual.refeicoes);
-        await _js.SalvarComo("Sample.pdf", dados);
+        await _js.SalvarComo(arquivo, dados);
 
         //await _js.InvokeVoidAsync("Download", diarioAtual.ToString(), "Relatorio Alimentar de " + diarioAtual.data.ToShortDateString());
     }

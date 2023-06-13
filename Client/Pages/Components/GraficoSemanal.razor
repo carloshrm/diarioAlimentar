@@ -5,16 +5,18 @@
 
 @if (diarios.Any())
 {
-    <ApexChart TItem="Diario"
-               Title="Consumo Semanal">
+    <div class="container-transp p-2">
+        <ApexChart TItem="Diario"
+                   Title="Consumo Semanal">
 
-        <ApexPointSeries TItem="Diario"
-                         Items="diarios"
-                         SeriesType="SeriesType.Bar"
-                         Name="calorias"
-                         XValue='@(e => br.DateTimeFormat.GetDayName(e.data.DayOfWeek))'
-                         YAggregate="@(e => e.Sum(e => e.refeicoes.Sum(r => (decimal)r.GerarRelatorio().Centesimal.energiaKcal)))" />
-    </ApexChart>
+            <ApexPointSeries TItem="Diario"
+                             Items="diarios"
+                             SeriesType="SeriesType.Bar"
+                             Name="calorias"
+                             XValue='@(e => br.DateTimeFormat.GetDayName(e.data.DayOfWeek))'
+                             YAggregate="@(e => e.Sum(e => e.refeicoes.Sum(r => (decimal)r.GerarRelatorio().Centesimal.energiaKcal)))" />
+        </ApexChart>
+    </div>
 }
 @code {
     private List<Diario> diarios { get; set; } = new();
