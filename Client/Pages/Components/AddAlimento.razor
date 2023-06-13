@@ -105,11 +105,10 @@
 
     private async Task BuscarAlimento()
     {
-        Console.WriteLine("busca");
         if (buscaDigitada.Length == 0)
             return;
         var al = await _alimentoService.GetPorNome(buscaDigitada);
-        if (al != null && al.Any())
+        if (al != null)
         {
             encontrados = al;
             StateHasChanged();
