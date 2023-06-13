@@ -21,22 +21,22 @@
                 <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-1 ref @(refeicaoAtiva == refGravada ? "ativa my-4" : "my-2")">
                     <div>
                         <div class="d-flex justify-content-between">
-                            <p class="m-0 flex-grow-1">Refeição adicionada às: @refGravada.horario.ToShortTimeString()</p>
+                            <p class="m-0">Refeição adicionada às: @refGravada.horario.ToShortTimeString()</p>
+                            <p>Energia total: @refGravada.porcoes.Sum(p => p.quantidade * p.alimento.informacao.Centesimal.energiaKcal) kcal</p>
                             <button class="btn btn-diario-ct-alt oi oi-trash" @onclick=@(() => confirmarRemocao = !confirmarRemocao)></button>
-                            @if (confirmarRemocao && refeicaoAtiva == refGravada)
-                            {
-                                <div class="bg-dark text-white rounded px-1">
-                                    <span>Remover esta refeição vai apagar todos os alimentos registrados, tem certeza?</span>
-                                    <button class="btn btn-danger btn-sm" @onclick=@(async () => await RemoverRefeicao(refGravada))>
-                                        Sim
-                                    </button>
-                                    <button class="btn-diario-ct-alt btn-sm" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>Não</button>
-                                </div>
-                            }
                         </div>
+                        @if (confirmarRemocao && refeicaoAtiva == refGravada)
+                        {
+                            <div class="bg-dark text-white rounded px-1">
+                                <span>Remover esta refeição vai apagar todos os alimentos registrados, tem certeza?</span>
+                                <button class="btn btn-danger btn-sm" @onclick=@(async () => await RemoverRefeicao(refGravada))>
+                                    Sim
+                                </button>
+                                <button class="btn-diario-ct-alt btn-sm" @onclick=@(() => confirmarRemocao = !confirmarRemocao)>Não</button>
+                            </div>
+                        }
                         <p class="oi @(refeicaoAtiva == refGravada ? "oi-menu" : "oi-plus") mx-2"></p>
-                        <span class="h4">Alimentos </span>
-
+                        <span class="h5">Alimentos </span>
                         @foreach (var p in refGravada.porcoes)
                         {
                             <PorcaoView porcao=p ativa=@(refeicaoAtiva == refGravada) callbackDelete=@(async (p) => await RemoverPorcao(p)) />
@@ -47,11 +47,11 @@
                         <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar />
                         @if (refeicaoAtiva.porcoes.Any())
                         {
-                            <button class="btn-diario-alt btn-sm" @onclick=@(() => SugerirReceita())>Sugestão de Receitas</button>
+                            <button class="btn-diario-alt btn-sm mt-4" @onclick=@(() => SugerirReceita())>Sugestão de Receitas</button>
                         }
                         @if (mostrarReceitas)
                         {
-                            <div class="container-fluid d-flex my-5">
+                            <div class="container-fluid d-flex">
                                 @foreach (var r in receitas)
                                 {
                                     <div class="w-25 m-2">
