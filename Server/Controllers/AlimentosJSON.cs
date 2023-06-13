@@ -18,7 +18,13 @@ public class AlimentosJSON : IAlimentoProvider
 
     public IEnumerable<Alimento> BuscarAlimentosPorNome(string nome)
     {
-        return alimentos.Values.Where(a => a.nome.ToLower().Contains(nome));
+        var nomePartes = nome.Split(' ').Where(n => n.Length >= 3);
+        var resultado = new List<Alimento>();
+        foreach (var p in nomePartes)
+        {
+            resultado.AddRange(alimentos.Values.Where(a => a.nome.ToLower().Contains(p)));
+        }
+        return resultado;
     }
 
     public IEnumerable<Alimento> GetTodosAlimentos()
