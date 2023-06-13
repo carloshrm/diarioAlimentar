@@ -45,17 +45,13 @@
                     @if (refeicaoAtiva == refGravada)
                     {
                         <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar />
-                        @if (refeicaoAtiva.porcoes.Any())
-                        {
-                            <button class="btn-diario-alt btn-sm mt-4" @onclick=@(() => SugerirReceita())>Sugestão de Receitas</button>
-                        }
                         @if (mostrarReceitas)
                         {
                             <div class="container-fluid d-flex">
                                 @foreach (var r in receitas)
                                 {
                                     <div class="w-25 m-2">
-                                        <a href=@r.url><img src=@r.img class="img-fluid" /> @r.nome</a>
+                                        <a href=@r.url class="p-2 m-"><img src=@r.img class="img-fluid" /> @r.nome</a>
                                     </div>
                                 }
                             </div>
