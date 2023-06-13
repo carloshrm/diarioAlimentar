@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-
 namespace diarioAlimentar.Server.Controllers;
 
 public class AlimentosJSON : IAlimentoProvider

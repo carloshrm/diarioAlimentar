@@ -42,6 +42,7 @@ public class DiarioController : ControllerBase
         {
             var novoDiario = new Diario() { usuarioID = idUsuarioRequest };
             novoDiario.AdicionarRefeicao(new Refeicao());
+
             _ctx.Diarios.Add(novoDiario);
             await _ctx.SaveChangesAsync();
             return Ok(novoDiario);
@@ -126,12 +127,10 @@ public class DiarioController : ControllerBase
             _ctx.Refeicoes
                 .Where(r => r.diarioID == d.diarioID)
                 .ToList())
-        {
-            _ctx.Porcoes
-                .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
-                .ToList()
-                .ForEach(p => p.alimento = _provider.GetAlimentoPorID(p.alimentoID));
-        }
+                _ctx.Porcoes
+                    .Where(p => p.refeicaoID == dbRefeicao.refeicaoID)
+                    .ToList()
+                    .ForEach(p => p.alimento = _provider.GetAlimentoPorID(p.alimentoID));
     }
 
     [HttpGet("sem")]

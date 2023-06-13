@@ -18,8 +18,7 @@ namespace diarioAlimentar.Server.Data
             DbContextOptions options, 
             IOptions<OperationalStoreOptions> operationalStoreOptions) 
             : base(options, operationalStoreOptions)
-        {
-        }
+        { }
 
         public DbSet<Diario> Diarios { get; set; }
         public DbSet<Refeicao> Refeicoes { get; set; }

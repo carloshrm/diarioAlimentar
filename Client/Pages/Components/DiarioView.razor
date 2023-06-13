@@ -7,6 +7,7 @@
 @using iTextSharp.text;
 
 @implements IDisposable;
+
 @inject DiarioService _diarioService;
 @inject ReceitaService _receitas;
 @inject IJSRuntime _js;
@@ -15,33 +16,32 @@
     @if (diarioAtual != null)
     {
         <div class="container-transp m-2 d-flex" id="diario-titulo">
-
             <h2 class="m-2">Diário Alimentar</h2>
             <div class="ms-auto d-flex align-items-center p-2 border border-2 border-white bg-white">
                 <button class="btn-diario btn-sm" @onclick=@(() => TrocarDiario())>Dia anterior</button>
                 <h5 class="m-2 fw-bold">Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
+
                 @if (diarioAtual.data.Date != DateTime.Now.Date)
                 {
                     <button class="btn btn-diario btn-sm" @onclick=@(() => TrocarDiario(voltar: false))>Dia Posterior</button>
                 }
             </div>
         </div>
+
         <RelatorioMacro bmr=@bmr relatorio=@relatorio />
 
         <div class="container-transp p-2 my-4">
             <div class="d-flex justify-content-between">
                 <h2>Refeições</h2>
-                <button class="btn-sm btn-diario-ct-alt m-2" @onclick=@(() => BaixarRelatorio())>
-                    <span class="oi oi-bookmark"></span>Salvar</button>
+                <button class="btn-sm btn-diario-ct-alt m-2" @onclick=@(() => BaixarRelatorio())> 
+                    <span class="oi oi-bookmark"></span>Salvar
+                </button>
             </div>
             <RefeicoesView refeicoes=@diarioAtual.refeicoes callbackAtualizar=@atualizarDiario />
             <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarDiario />
         </div>
     }
-    else
-    {
-        <Carregando />
-    }
+    else { <Carregando /> }
 </div>
 
 @code {

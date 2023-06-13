@@ -20068,15 +20068,15 @@
     "nome": "Leite, de vaca, desnatado, UHT",
     "informacao": {
       "Centesimal": {
-        "umidade": 0,
-        "energiaKcal": 0.4,
-        "energiaKJ": 17,
-        "proteina": 0.02,
-        "lipideos": 0,
-        "colesterol": 0.03,
-        "carboidrato": 0.05,
+        "umidade": 89.9,
+        "energiaKcal": 39,
+        "energiaKJ": 165,
+        "proteina": 2.98,
+        "lipideos": 0.36,
+        "colesterol": 3.75,
+        "carboidrato": 5.95,
         "fibras": 0,
-        "cinzas": 0.8
+        "cinzas": 0.77
       },
       "Vitaminas": {
         "retinol": 0,
@@ -20112,15 +20112,15 @@
     "nome": "Leite, de vaca, integral",
     "informacao": {
       "Centesimal": {
-        "umidade": 0,
-        "energiaKcal": 0.7,
-        "energiaKJ": 27,
-        "proteina": 0.02,
-        "lipideos": 0.03,
-        "colesterol": 4,
-        "carboidrato": 0.07,
+        "umidade": 87.2,
+        "energiaKcal": 64,
+        "energiaKJ": 270,
+        "proteina": 2.93,
+        "lipideos": 3.23,
+        "colesterol": 12.4,
+        "carboidrato": 5.92,
         "fibras": 0,
-        "cinzas": 0.8
+        "cinzas": 0.67
       },
       "Vitaminas": {
         "retinol": 21,
