@@ -84,7 +84,7 @@
 
     protected override void OnParametersSet()
     {
-        listaLocal = refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo);
+        listaLocal = refeicoes.OrderByDescending(r => r.horario).GroupBy(r => r.periodo);
         base.OnParametersSet();
     }
 
