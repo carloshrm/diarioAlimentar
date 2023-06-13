@@ -20,12 +20,14 @@ namespace diarioAlimentar.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("diarioAlimentar.ServerAPI"));
 
-            builder.Services.AddTransient<AlimentoService>();
-            builder.Services.AddTransient<DiarioService>();
-            builder.Services.AddTransient<PorcaoService>();
-            builder.Services.AddTransient<RefeicaoService>();
-            builder.Services.AddTransient<ReceitaService>();
+            builder.Services.AddScoped<AlimentoService>();
+
             builder.Services.AddTransient<TradutorService>();
+            builder.Services.AddTransient<ReceitaService>();
+
+            builder.Services.AddScoped<DiarioService>();
+            builder.Services.AddScoped<PorcaoService>();
+            builder.Services.AddScoped<RefeicaoService>();
             builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

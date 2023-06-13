@@ -21,7 +21,14 @@
                 </tbody>
             </table>
         </div>
-        <ApexGauge Percentage=@(Math.Round((decimal)(relatorio.Centesimal.energiaKcal / bmr) * 100, 2)) Label="Calorias" Title="Energia" />
+        <ApexChart TItem="GaugeValue" Title="Energia" @ref=@energiaGr>
+            <ApexPointSeries TItem="GaugeValue"
+                             SeriesType=SeriesType.RadialBar
+                             Items=pct
+                             Name="Calorias"
+                             XValue="@(e => e.Label)"
+                             YValue="@(e => e.Percentage)" />
+        </ApexChart>
     </div>
     @if (relatorio.Centesimal.energiaKcal > 200)
     {
@@ -109,19 +116,26 @@
     public double bmr { get; set; }
 
     private List<AgregaMacro> info;
+    private List<GaugeValue> pct;
     private ApexChart<AgregaMacro> graficoMacro;
+    private ApexChart<GaugeValue> energiaGr;
+
     private bool resumoSemanal = false;
 
     protected override void OnParametersSet()
     {
         info = new();
+        pct = new List<GaugeValue> { new GaugeValue { Label = "Calorias", Percentage = Math.Round((decimal)(relatorio.Centesimal.energiaKcal / bmr) * 100, 2) } };
         info.Add(new AgregaMacro() { def = "Gorduras Saturadas", val = relatorio.Gorduras.sat });
         info.Add(new AgregaMacro() { def = "Gorduras Insaturadas", val = relatorio.Gorduras.poliinsat + relatorio.Gorduras.monoinsat });
         info.Add(new AgregaMacro() { def = "Carboidratos", val = relatorio.Centesimal.carboidrato });
         info.Add(new AgregaMacro() { def = "Proteinas", val = relatorio.Centesimal.proteina });
         info.Add(new AgregaMacro() { def = "Fibras", val = relatorio.Centesimal.fibras });
+
         if (graficoMacro != null)
             graficoMacro.RenderAsync();
+        if (energiaGr != null)
+            energiaGr.RenderAsync();
     }
 
     internal class AgregaMacro
