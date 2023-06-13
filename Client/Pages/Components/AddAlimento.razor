@@ -82,6 +82,8 @@
 
     private async void AdicionarAlimento(Alimento al)
     {
+        if (quantidade <= 0) 
+            quantidade = 1;
         var novaPorcao = (new Porcao() { alimento = al, quantidade = (medida * quantidade) / 100, alimentoID = al.AlimentoID });
         refeicao.AdicionarPorcao(novaPorcao);
         await _porcaoService.SetPorcao(novaPorcao);
