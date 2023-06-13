@@ -18,7 +18,7 @@
             {
                 @if (refeicaoAtiva == null) refeicaoAtiva = refGravada;
 
-                <div @onclick=@(() => refeicaoAtiva = refGravada) class="p-1 ref @(refeicaoAtiva == refGravada ? "ativa my-4" : "my-2")">
+                <div @onclick=@(() => { refeicaoAtiva = refGravada; mostrarReceitas = false; }) class="p-1 ref @(refeicaoAtiva == refGravada ? "ativa my-4" : "my-2")">
                     <div>
                         <div class="d-flex justify-content-between">
                             <p class="m-0">Refeição adicionada às: @refGravada.horario.ToShortTimeString()</p>
