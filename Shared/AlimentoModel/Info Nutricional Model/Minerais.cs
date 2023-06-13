@@ -11,7 +11,7 @@ public readonly struct Minerais
     public readonly double cobre { get; init; }
     public readonly double zinco { get; init; }
 
-    public static Minerais operator +(Minerais a, Minerais b)
+    public static Minerais operator + (Minerais a, Minerais b)
     {
         return new Minerais()
         {
@@ -26,7 +26,7 @@ public readonly struct Minerais
         };
     }
 
-    public static Minerais operator *(Minerais a, double b)
+    public static Minerais operator * (Minerais a, double b)
     {
         return new Minerais()
         {

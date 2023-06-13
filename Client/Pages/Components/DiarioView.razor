@@ -3,18 +3,21 @@
 
 @using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
+@using iTextSharp.text.pdf;
+@using iTextSharp.text;
 
 @implements IDisposable;
 @inject DiarioService _diarioService;
+@inject ReceitaService _receitas;
 @inject IJSRuntime _js;
 
 <div class="container-xl" id="diario-container">
     @if (diarioAtual != null)
     {
-        <div class="bg-white m-2 d-flex" id="diario-titulo">
+        <div class="container-transp m-2 d-flex" id="diario-titulo">
 
             <h2 class="m-2">Diário Alimentar</h2>
-            <div class="ms-auto d-flex align-items-center p-2 border border-2 border-white">
+            <div class="ms-auto d-flex align-items-center p-2 border border-2 border-white bg-white">
                 <button class="btn-diario btn-sm" @onclick=@(() => TrocarDiario())>Dia anterior</button>
                 <h5 class="m-2 fw-bold">Data: @diarioAtual.data.ToString("dd/MM/yyyy")</h5>
                 @if (diarioAtual.data.Date != DateTime.Now.Date)
@@ -29,6 +32,7 @@
             <div class="d-flex justify-content-between">
                 <h2>Refeições</h2>
                 <button class="btn-sm btn-diario-alt m-2" @onclick=@(() => BaixarRelatorio())>Salvar</button>
+                <a href=@pdfUrl>abcd</a>
             </div>
             <RefeicoesView refeicoes=@diarioAtual.refeicoes callbackAtualizar=@atualizarDiario />
             <AddRefeicao diarioAtual=@diarioAtual callbackAtualizar=@atualizarDiario />
@@ -50,6 +54,7 @@
     private Action atualizarDiario { get; set; }
 
     private double bmr { get; set; } = 2000;
+    private string pdfUrl = "";
 
     public DiarioView()
     {
@@ -113,13 +118,22 @@
 
     private void CalcularRelatorioGeral()
     {
-        relatorio = diarioAtual.refeicoes.Select(a => a.GerarRelatorio()).Aggregate((a, b) => a + b);
+        var relGeral = new InfoNutricional();
+        foreach (var relInd in diarioAtual.refeicoes.Select(a => a.GerarRelatorio()))
+        {
+            relGeral += relInd;
+        }
+        relatorio = relGeral;
         StateHasChanged();
     }
 
     private async Task BaixarRelatorio()
     {
-        await _js.InvokeVoidAsync("Download", diarioAtual.ToString(), "Relatorio Alimentar de " + diarioAtual.data.ToShortDateString());
+        string arquivo = "Diario " + diarioAtual.data.ToString("dd_MM_YYYY") + ".pdf";
+        var dados = PdfHelper.GerarPdf(arquivo, "Diario Alimentar de " + diarioAtual.data.ToShortDateString(), diarioAtual.refeicoes);
+        await _js.SalvarComo("Sample.pdf", dados);
+
+        //await _js.InvokeVoidAsync("Download", diarioAtual.ToString(), "Relatorio Alimentar de " + diarioAtual.data.ToShortDateString());
     }
 
     private async Task SalvarDiario()

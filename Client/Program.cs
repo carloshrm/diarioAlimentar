@@ -24,6 +24,8 @@ namespace diarioAlimentar.Client
             builder.Services.AddTransient<DiarioService>();
             builder.Services.AddTransient<PorcaoService>();
             builder.Services.AddTransient<RefeicaoService>();
+            builder.Services.AddTransient<ReceitaService>();
+            builder.Services.AddTransient<TradutorService>();
             builder.Services.AddApiAuthorization();
             await builder.Build().RunAsync();
         }

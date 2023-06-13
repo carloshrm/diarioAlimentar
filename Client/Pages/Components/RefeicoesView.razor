@@ -1,7 +1,10 @@
 ﻿@using diarioAlimentar.Client.Services;
 @using diarioAlimentar.Shared;
+
 @inject PorcaoService _porcaoService;
 @inject RefeicaoService _refeicaoService;
+@inject ReceitaService _receitaService;
+@inject TradutorService _tradutorService;
 
 @foreach (var refPeriodo in listaLocal)
 {
@@ -42,6 +45,21 @@
                     @if (refeicaoAtiva == refGravada)
                     {
                         <AddAlimento refeicao=@refeicaoAtiva callbackAtualizar=@callbackAtualizar />
+                        @if (refeicaoAtiva.porcoes.Any())
+                        {
+                            <button class="btn-diario-alt btn-sm" @onclick=@(() => SugerirReceita())>Sugestão de Receitas</button>
+                        }
+                        @if (mostrarReceitas)
+                        {
+                            <div class="container-fluid d-flex">
+                                @foreach (var r in receitas)
+                                {
+                                    <div class="w-25 m-2">
+                                        <a href=@r.url><img src=@r.img class="img-fluid" /> @r.nome</a>
+                                    </div>
+                                }
+                            </div>
+                        }
                     }
                 </div>
             }
@@ -61,10 +79,26 @@
     public Refeicao? refeicaoAtiva { get; set; } = null;
     private bool confirmarRemocao { get; set; } = false;
 
+    private bool mostrarReceitas { get; set; } = false;
+    private List<Receita> receitas { get; set; } = new List<Receita>();
+
     protected override void OnParametersSet()
     {
         listaLocal = refeicoes.OrderBy(r => r.horario).GroupBy(r => r.periodo);
         base.OnParametersSet();
+    }
+
+    private async void SugerirReceita()
+    {
+        var alimento = refeicaoAtiva.porcoes.OrderByDescending(p => p.quantidade).First().alimento.nome.Split(",").First();
+        var traducao = await _tradutorService.PtParaEn(alimento);
+        receitas = await _receitaService.BuscarReceita(traducao);
+        for (int i = 0; i < receitas.Count; i++)
+        {
+            receitas[i].nome = await _tradutorService.EnParaPt(receitas[i].nome);
+        }
+        mostrarReceitas = true;
+        StateHasChanged();
     }
 
     public async Task RemoverPorcao(Porcao p)

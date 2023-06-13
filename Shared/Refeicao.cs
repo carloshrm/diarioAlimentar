@@ -15,10 +15,7 @@ public class Refeicao
 
     public Guid diarioID { get; set; }
 
-    public Refeicao()
-    {
-
-    }
+    public Refeicao() { }
 
     public void AdicionarPorcao(Porcao porcao)
     {
@@ -30,7 +27,9 @@ public class Refeicao
     {
         var resultado = new InfoNutricional();
         foreach (var alm in porcoes)
-            resultado += alm.alimento.informacao * alm.quantidade;
+        {
+            resultado += (alm.alimento.informacao * alm.quantidade);
+        }
         return resultado;
     }
 

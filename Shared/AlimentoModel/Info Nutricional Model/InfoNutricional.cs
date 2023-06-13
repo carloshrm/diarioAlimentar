@@ -28,5 +28,4 @@ public class InfoNutricional
             Gorduras = a.Gorduras * b,
         };
     }
-
 };

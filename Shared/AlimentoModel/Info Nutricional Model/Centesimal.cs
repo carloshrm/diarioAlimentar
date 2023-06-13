@@ -17,7 +17,7 @@ public readonly struct Centesimal
         return new Centesimal()
         {
             umidade = a.umidade + b.umidade,
-            energiaKcal = a.energiaKcal + b.energiaKJ,
+            energiaKcal = a.energiaKcal + b.energiaKcal,
             energiaKJ = a.energiaKJ + b.energiaKJ,
             proteina = a.proteina + b.proteina,
             lipideos = a.lipideos + b.lipideos,

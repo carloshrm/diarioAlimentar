@@ -7,7 +7,6 @@ namespace diarioAlimentar.Client.Services
     public class RefeicaoService
     {
         private readonly HttpClient _http;
-        public Refeicao refeicaoAtiva { get; set; }
 
         public RefeicaoService(HttpClient client) 
         {
