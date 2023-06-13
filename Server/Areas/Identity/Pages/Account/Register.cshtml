@@ -30,7 +30,7 @@
 
             <div class="form-group mb-3">
                 <label asp-for="Input.dataNascimento" class="form-label">Data de Nascimento</label>
-                <input asp-for="Input.dataNascimento" class="form-label" />
+                <input asp-for="Input.dataNascimento" class="form-label" max="2010-01-01" />
                 <span asp-validation-for="Input.dataNascimento" class="text-danger"></span>
 
             </div>
