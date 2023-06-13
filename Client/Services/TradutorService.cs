@@ -11,7 +11,7 @@ namespace diarioAlimentar.Client.Services
     public class TradutorService
     {
         private readonly HttpClient _http;
-        private string key;
+        private string header;
         private static readonly string endpoint = "https://api.cognitive.microsofttranslator.com";
 
         private string routeEn = "/translate?api-version=3.0&from=en&to=pt-br";
@@ -20,11 +20,7 @@ namespace diarioAlimentar.Client.Services
         public TradutorService(HttpClient client, IConfiguration config)
         {
             _http = client;
-            key = config["tlkey"];
-            if (key.Length == 0)
-            {
-                throw new InvalidOperationException("tl key");
-            }
+            header = config["tlk"];
         }
 
         public async Task<string> EnParaPt(string t)
@@ -37,7 +33,7 @@ namespace diarioAlimentar.Client.Services
                 req.Method = HttpMethod.Post;
                 req.RequestUri = new Uri(endpoint + routeEn);
                 req.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                req.Headers.Add("Ocp-Apim-Subscription-Key", key);
+                req.Headers.Add("Ocp-Apim-Subscription-Key", header);
 
                 HttpResponseMessage response = await _http.SendAsync(req).ConfigureAwait(false);
 
@@ -58,7 +54,7 @@ namespace diarioAlimentar.Client.Services
                 req.Method = HttpMethod.Post;
                 req.RequestUri = new Uri(endpoint + routePt);
                 req.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                req.Headers.Add("Ocp-Apim-Subscription-Key", key);
+                req.Headers.Add("Ocp-Apim-Subscription-Key", header);
 
                 HttpResponseMessage response = await _http.SendAsync(req).ConfigureAwait(false);
 

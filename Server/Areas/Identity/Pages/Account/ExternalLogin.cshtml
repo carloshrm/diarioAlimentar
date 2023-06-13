@@ -3,22 +3,23 @@
 @{
     ViewData["Title"] = "Register";
 }
+<div class="container-transp p-2 m-2">
+    <h1>@ViewData["Title"]</h1>
+    <h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+    <hr />
 
-<h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
-<hr />
-
-<p id="external-login-description" class="text-info">
-    O registro com sua conta <strong>@Model.ProviderDisplayName</strong> foi bem sucedido.
-    Por favor, termine de preencher as informações do seu cadastro e clique em registrar.
-</p>
+    <p id="external-login-description" class="text-info">
+        O registro com sua conta <strong>@Model.ProviderDisplayName</strong> foi bem sucedido.
+        Por favor, termine de preencher as informações do seu cadastro e clique em registrar.
+    </p>
+</div>
 
 <div class="row p-4 container-transp">
     <div class="col-md-4">
         <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Email."/>
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Email." />
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
